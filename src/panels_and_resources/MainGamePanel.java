@@ -10,6 +10,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
@@ -27,7 +28,7 @@ import plants.CherryBomb;
 import plants.PotatoMine;
 import plants.SunFlower;
 import plants.WallNut;
-import plants.WallNut_roll;
+import plants.WallNutRoll;
 import zombies.ZombieFlag;
 import zombies.ZombieNormal;
 import zombies.ZombiePoleVaulting;
@@ -79,8 +80,6 @@ import zombies.ZombiePoleVaulting;
 public class MainGamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener {
     /**
      * 1. 全局变量定义
-     */
-    /**
      * 1.1 庭院和门前小车背景图片
      */
     private static BufferedImage img_yard;
@@ -162,7 +161,7 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
      * 1.18 滚动坚果数组
      * 动态数组(当用户种植时，数组元素增加1个)
      */
-    private WallNut_roll[] wallNuts_roll = {};
+    private WallNutRoll[] wallNutsRoll = {};
     /**
      * 1.19 第一类僵尸图片集(普通僵尸)
      */
@@ -236,7 +235,7 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
     /**
      * 1.36 铲槽图片
      */
-    public static BufferedImage img_shovelBank;
+    private static BufferedImage img_shovelBank;
     /**
      * 1.37 铁铲图片
      */
@@ -269,61 +268,108 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
      * 1.44 爆炸僵尸图片集
      */
     public static BufferedImage[] img_zombiesBomb;
-    // 1.45 土豆地雷爆破图片
+    /**
+     * 1.45 土豆地雷爆破图片
+     */
     public static BufferedImage img_potatoMineBomb;
-    // 1.46 土豆地雷准备状态图片
+    /**
+     * 1.46 土豆地雷准备状态图片
+     */
     public static BufferedImage img_potatoMineNotReady;
-    // 1.47 樱桃炸弹爆炸图片
+    /**
+     * 1.47 樱桃炸弹爆炸图片
+     */
     public static BufferedImage img_cherryBombBomb;
-    // 1.48 准备安放植物图片集
-    public static BufferedImage[] img_prepareGrowPlants;
-    // 1.59 一大波僵尸即将接近图片
-    public static BufferedImage img_largeWave;
-    // 1.60 僵尸胜利图片
-    public static BufferedImage img_zombiesWon;
-    // 1.61 用户胜利图片
-    public static BufferedImage img_userWon;
-    // 1.62 僵尸胜利标志
-    public static boolean zombiesWon;
-    // 1.63 用户胜利标志
-    public static boolean userWon;
-
-    // 1.64 撑杆跳僵尸攻击图片集
-    public static BufferedImage[] img_zombiesPoleVaultingAttack;
-    // 1.65 撑杆跳僵尸无头图片集
-    public static BufferedImage[] img_zombiesPoleVaultingLostHead;
-    // 1.66 撑杆跳僵尸无头攻击图片集
-    public static BufferedImage[] img_zombiesPoleVaultingLostHeadAttack;
-    // 1.67 举旗僵尸攻击图片集
-    public static BufferedImage[] img_zombiesFlagAttack;
-    // 1.68 举旗僵尸无头图片集
-    public static BufferedImage[] img_zombiesFlagLostHead;
-    // 1.69 举旗僵尸无头攻击图片集
-    public static BufferedImage[] img_zombiesFlagLostHeadAttack;
-    // 1.70 撑杆跳僵尸死亡图片集
-    public static BufferedImage[] img_zombiesPoleVaultingDie;
-    // 1.71 白天场景按钮
-    public static BufferedImage img_daytime_button;
-    // 1.72 夜晚场景按钮
-    public static BufferedImage img_night_button;
-    // 1.73 标记当前处于白天场景
-    public static boolean isDaytime;
-    // 1.74 白天场景图片
-    public static BufferedImage img_daytime_scene;
-    // 1.75 夜晚场景图片
-    public static BufferedImage img_night_scene;
-    // 1.77 冷冻豌豆射手图片集
-    public static BufferedImage[] img_beanShootersIce;
-    // 1.78 冷冻豌豆射手子弹图片
-    public static BufferedImage img_beanBulletIce;
-    // 1.79 雪花图片按钮图片
-    public static BufferedImage img_snow_button;
-    // 1.80 标记当前处于冰冻模式
-    public static boolean isIceMode;
+    /**
+     * 1.48 准备安放植物图片集
+     */
+    private static BufferedImage[] img_prepareGrowPlants;
+    /**
+     * 1.59 一大波僵尸即将接近图片
+     */
+    private static BufferedImage img_largeWave;
+    /**
+     * 1.60 僵尸胜利图片
+     */
+    private static BufferedImage img_zombiesWon;
+    /**
+     * 1.61 用户胜利图片
+     */
+    private static BufferedImage img_userWon;
+    /**
+     * 1.62 僵尸胜利标志
+     */
+    private static boolean zombiesWon;
+    /**
+     * 1.63 用户胜利标志
+     */
+    private static boolean userWon;
 
     /**
-     * 2. 静态代码块
+     * 1.64 撑杆跳僵尸攻击图片集
      */
+    public static BufferedImage[] img_zombiesPoleVaultingAttack;
+    /**
+     * 1.65 撑杆跳僵尸无头图片集
+     */
+    public static BufferedImage[] img_zombiesPoleVaultingLostHead;
+    /**
+     * 1.66 撑杆跳僵尸无头攻击图片集
+     */
+    public static BufferedImage[] img_zombiesPoleVaultingLostHeadAttack;
+    /**
+     * 1.67 举旗僵尸攻击图片集
+     */
+    public static BufferedImage[] img_zombiesFlagAttack;
+    /**
+     * 1.68 举旗僵尸无头图片集
+     */
+    public static BufferedImage[] img_zombiesFlagLostHead;
+    /**
+     * 1.69 举旗僵尸无头攻击图片集
+     */
+    public static BufferedImage[] img_zombiesFlagLostHeadAttack;
+    /**
+     * 1.70 撑杆跳僵尸死亡图片集
+     */
+    public static BufferedImage[] img_zombiesPoleVaultingDie;
+    /**
+     * 1.71 白天场景按钮
+     */
+    private static BufferedImage img_daytime_button;
+    /**
+     * 1.72 夜晚场景按钮
+     */
+    private static BufferedImage img_night_button;
+    /**
+     * 1.73 标记当前处于白天场景
+     */
+    private static boolean isDaytime;
+    /**
+     * 1.74 白天场景图片
+     */
+    private static BufferedImage img_daytime_scene;
+    /**
+     * 1.75 夜晚场景图片
+     */
+    private static BufferedImage img_night_scene;
+    /**
+     * 1.77 冷冻豌豆射手图片集
+     */
+    public static BufferedImage[] img_beanShootersIce;
+    /**
+     * 1.78 冷冻豌豆射手子弹图片
+     */
+    public static BufferedImage img_beanBulletIce;
+    /**
+     * 1.79 雪花图片按钮图片
+     */
+    private static BufferedImage img_snow_button;
+    /**
+     * 1.80 标记当前处于冰冻模式
+     */
+    private static boolean isIceMode;
+
     static {
         try {
             // 背景初始化
@@ -588,7 +634,7 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
     /**
      * 3.1 绘制庭院背景、小车、欢迎语(准备安放植物！僵尸来临)等静态物体
      *
-     * @param g
+     * @param g 画笔工具
      */
     private void paintBasicObject(Graphics g) {
         g.drawImage(img_yard, 0, 0, null);
@@ -610,7 +656,11 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    // 3.2 绘制太阳池卡槽和铲槽
+    /**
+     * 3.2 绘制太阳池卡槽和铲槽
+     *
+     * @param g 画笔工具
+     */
     private void paintSunBank(Graphics g) {
         // 绘制太阳池卡槽
         g.drawImage(sunBank.image, sunBank.x, sunBank.y, null);
@@ -620,7 +670,11 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    // 3.3 绘制铁锹池和铁锹
+    /**
+     * 3.3 绘制铁锹池和铁锹
+     *
+     * @param g 画笔工具
+     */
     private void paintShovelBank(Graphics g) {
         // 绘制铲槽
         g.drawImage(img_shovelBank, 470, 15, null);
@@ -628,7 +682,11 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         g.drawImage(shovel.image, shovel.x, shovel.y, null);
     }
 
-    // 3.4 绘制当前太阳池能量
+    /**
+     * 3.4 绘制当前太阳池能量
+     *
+     * @param g 画笔工具
+     */
     private void drawSunEnergy(Graphics g) {
 
         g.setColor(Color.BLACK);
@@ -636,56 +694,71 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         g.drawString(String.valueOf(currentSunEnergy), 35, 85);
     }
 
-    // 3.5 绘制植物
+    /**
+     * 3.5 绘制植物
+     *
+     * @param g 画笔工具
+     */
     private void drawPlants(Graphics g) {
 
         // 3.5.1 绘制太阳花
-        for (int i = 0; i < sunFlowers.length; i++)
-            g.drawImage(sunFlowers[i].image, sunFlowers[i].x, sunFlowers[i].y, null);
+        for (SunFlower sunFlower : sunFlowers) {
+            g.drawImage(sunFlower.image, sunFlower.x, sunFlower.y, null);
+        }
         // 3.5.2 绘制豌豆射手
-        for (int i = 0; i < beanShooters.length; i++)
-            g.drawImage(beanShooters[i].image, beanShooters[i].x, beanShooters[i].y, null);
+        for (BeanShooter beanShooter : beanShooters) {
+            g.drawImage(beanShooter.image, beanShooter.x, beanShooter.y, null);
+        }
         // 3.5.3 绘制防御坚果
-        for (int i = 0; i < wallNuts.length; i++)
-            g.drawImage(wallNuts[i].image, wallNuts[i].x, wallNuts[i].y, null);
+        for (WallNut wallNut : wallNuts) {
+            g.drawImage(wallNut.image, wallNut.x, wallNut.y, null);
+        }
         // 3.5.4 绘制爆炸樱桃
-        for (int i = 0; i < cherryBombs.length; i++)
-            g.drawImage(cherryBombs[i].image, cherryBombs[i].x, cherryBombs[i].y, null);
+        for (CherryBomb cherryBomb : cherryBombs) {
+            g.drawImage(cherryBomb.image, cherryBomb.x, cherryBomb.y, null);
+        }
         // 3.5.5 绘制土豆地雷
-        for (int i = 0; i < potatoMines.length; i++)
-            g.drawImage(potatoMines[i].image, potatoMines[i].x, potatoMines[i].y, null);
+        for (PotatoMine potatoMine : potatoMines) {
+            g.drawImage(potatoMine.image, potatoMine.x, potatoMine.y, null);
+        }
         // 3.5.6 绘制滚动坚果
-        for (int i = 0; i < wallNuts_roll.length; i++)
-            g.drawImage(wallNuts_roll[i].image, wallNuts_roll[i].x, wallNuts_roll[i].y, null);
+        for (WallNutRoll wallNut_roll : wallNutsRoll) {
+            g.drawImage(wallNut_roll.image, wallNut_roll.x, wallNut_roll.y, null);
+        }
     }
 
     // 3.6 绘制待种植植物和区域阴影
     private void drawToBePlantAndShadow(Graphics g) {
 
-        if (nowToBePlanted != null)
+        if (nowToBePlanted != null) {
             g.drawImage(nowToBePlanted.image, nowToBePlanted.x, nowToBePlanted.y, null);
-        if (shadow != null)
+        }
+        if (shadow != null) {
             g.drawImage(shadow.image, shadow.x, shadow.y, null);
+        }
     }
 
     // 3.7 绘制僵尸
     private void drawZombies(Graphics g) {
 
-        for (int i = 0; i < zombies.length; i++)
-            g.drawImage(zombies[i].image, zombies[i].x, zombies[i].y, null);
+        for (BaseMovingObject zombie : zombies) {
+            g.drawImage(zombie.image, zombie.x, zombie.y, null);
+        }
     }
 
     // 3.8 绘制太阳
     private void drawSuns(Graphics g) {
 
-        for (int i = 0; i < suns.length; i++)
-            g.drawImage(suns[i].image, suns[i].x, suns[i].y, null);
+        for (Sun sun : suns) {
+            g.drawImage(sun.image, sun.x, sun.y, null);
+        }
     }
 
     // 3.9 绘制豌豆子弹
     private void drawBeanBullets(Graphics g) {
-        for (int i = 0; i < beanBullets.length; i++)
-            g.drawImage(beanBullets[i].image, beanBullets[i].x, beanBullets[i].y, null);
+        for (BeanBullet beanBullet : beanBullets) {
+            g.drawImage(beanBullet.image, beanBullet.x, beanBullet.y, null);
+        }
         // 绘制击碎状态的豌豆子弹
         if (beanBulletHit != null) {
             g.drawImage(beanBulletHit.image, beanBulletHit.x, beanBulletHit.y, null);
@@ -696,7 +769,8 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
 
     /**
      * 3.10 绘制游戏结束画面
-     * @param g
+     *
+     * @param g 画笔工具
      */
     private void drawGameEndPicture(Graphics g) {
         if (zombiesWon) {
@@ -724,20 +798,20 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
 
         while (true) {
             // 1. 业务处理
-            if (!(zombiesWon || userWon)) //游戏未结束时执行以下业务
-            {
+            //游戏未结束时执行以下业务
+            if (!(zombiesWon || userWon)) {
                 // 1.1 生成僵尸和太阳
                 generateZombiesAndSuns();
                 // 1.2 调用对象的移动方法
                 stepAction();
-                // 1.3 调用对象的出界方法
-                outOfBoundsAction();
+                // 1.3 调用所有对象的出界方法
+                outOfBoundsActionAll();
                 // 1.4 调用豌豆射手的射击子弹方法
                 shootAction();
                 // 1.5 碰撞处理操作
                 hitAction();
                 // 1.6 清除所有已死亡对象
-                clearDeadObjects();
+                clearAllDeadObjects();
                 // 1.7 更新当前卡片状态
                 sunBank.updateSunBank();
                 // 1.8 更新场景
@@ -759,18 +833,16 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
     private void generateZombiesAndSuns() {
         generateIndex++;
         BaseMovingObject zombie = null;
-        int generateInterval = 2000;
-        if (generateIndex > 6000)
+        int generateInterval;
+        if (generateIndex > 6000) {
             generateInterval = 1500;
-        else if (generateIndex > 8000)
-            generateInterval = 1000;
-        else
+        } else {
             generateInterval = 700;
+        }
         // 生成僵尸 (规定范围的目的是为了给用户种植植物的时间)
         if (generateIndex % generateInterval == 0 && generateIndex > 4000) {
             // 创建僵尸对象(类别随机)
-            int zombieType = (int) (Math.random() * 3);
-            // System.out.println(zombieType);
+            int zombieType = new Random().nextInt(3);
             switch (zombieType) {
                 case 0:
                     zombie = new ZombieNormal();
@@ -789,8 +861,8 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             zombies[zombies.length - 1] = zombie;
         }
         // 太阳花生成太阳
-        for (int i = 0; i < sunFlowers.length; i++) {
-            Sun sun = sunFlowers[i].generateSun();
+        for (SunFlower sunFlower : sunFlowers) {
+            Sun sun = sunFlower.generateSun();
             if (sun != null) {
                 // 数组扩容
                 suns = Arrays.copyOf(suns, suns.length + 1);
@@ -808,90 +880,96 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
 
     // 1.2 调用对象的移动方法
     private void stepAction() {
-
         // 小车移动
-        for (int i = 0; i < cars.length; i++)
-            cars[i].step();
+        for (Car car : cars) {
+            car.step();
+        }
         // 太阳花移动
-        for (int i = 0; i < sunFlowers.length; i++)
-            sunFlowers[i].step();
+        for (SunFlower sunFlower : sunFlowers) {
+            sunFlower.step();
+        }
         // 豌豆射手移动
-        for (int i = 0; i < beanShooters.length; i++)
-            beanShooters[i].step();
+        for (BeanShooter beanShooter : beanShooters) {
+            beanShooter.step();
+        }
         // 爆炸樱桃移动
-        for (int i = 0; i < cherryBombs.length; i++)
-            cherryBombs[i].step();
+        for (CherryBomb cherryBomb : cherryBombs) {
+            cherryBomb.step();
+        }
         // 土豆地雷移动
-        for (int i = 0; i < potatoMines.length; i++)
-            potatoMines[i].step();
+        for (PotatoMine potatoMine : potatoMines) {
+            potatoMine.step();
+        }
         // 防御坚果移动
-        for (int i = 0; i < wallNuts.length; i++)
-            wallNuts[i].step();
+        for (WallNut wallNut : wallNuts) {
+            wallNut.step();
+        }
         // 滚动坚果移动
-        for (int i = 0; i < wallNuts_roll.length; i++)
-            wallNuts_roll[i].step();
+        for (WallNutRoll wallNutRoll : wallNutsRoll) {
+            wallNutRoll.step();
+        }
         // 僵尸移动
-        for (int i = 0; i < zombies.length; i++)
-            zombies[i].step();
+        for (BaseMovingObject zombie : zombies) {
+            zombie.step();
+        }
         // 太阳移动
-        for (int i = 0; i < suns.length; i++)
-            suns[i].step();
+        for (Sun sun : suns) {
+            sun.step();
+        }
         // 豌豆子弹移动
-        for (int i = 0; i < beanBullets.length; i++)
-            beanBullets[i].step();
+        for (BeanBullet beanBullet : beanBullets) {
+            beanBullet.step();
+        }
     }
 
-    // 1.3 调用对象的出界方法
-    private void outOfBoundsAction() {
-
+    /**
+     * 1.3 调用对象的出界方法
+     */
+    private void outOfBoundsActionAll() {
         // 门前小车car的出界处理
-        for (int i = 0; i < cars.length; i++) {
-            if (cars[i].outOfBounds()) {
-                cars[i] = cars[cars.length - 1];
-                cars = Arrays.copyOf(cars, cars.length - 1);
-            }
-        }
+        outOfBoundsAction(cars);
         // 滚动坚果的出界处理
-        for (int i = 0; i < wallNuts_roll.length; i++) {
-            if (wallNuts_roll[i].outOfBounds()) {
-                wallNuts_roll[i] = wallNuts_roll[wallNuts_roll.length - 1];
-                wallNuts_roll = Arrays.copyOf(wallNuts_roll, wallNuts_roll.length - 1);
-            }
-        }
+        outOfBoundsAction(wallNuts);
         // 僵尸的出界处理
         // 僵尸出界代表僵尸进入了你的房子！僵尸胜利！游戏结束！
-        for (int i = 0; i < zombies.length; i++) {
-            if (zombies[i].outOfBounds()) {
-//				zombies[i] = zombies[zombies.length - 1];
-//				zombies = Arrays.copyOf(zombies, zombies.length - 1);
+        for (BaseMovingObject zombie : zombies) {
+            if (zombie.outOfBounds()) {
                 zombiesWon = true;
             }
         }
         // 太阳的出界处理
-        for (int i = 0; i < suns.length; i++) {
-            if (suns[i].outOfBounds()) {
-                suns[i] = suns[suns.length - 1];
-                suns = Arrays.copyOf(suns, suns.length - 1);
-            }
-        }
+        outOfBoundsAction(suns);
         // 豌豆子弹的出界处理
-        for (int i = 0; i < beanBullets.length; i++) {
-            if (beanBullets[i].outOfBounds()) {
-                beanBullets[i] = beanBullets[beanBullets.length - 1];
-                beanBullets = Arrays.copyOf(beanBullets, beanBullets.length - 1);
+        outOfBoundsAction(beanBullets);
+    }
+
+    /**
+     * 单类对象的出界方法
+     *
+     * @param objects 对象列表
+     */
+    private void outOfBoundsAction(BaseMovingObject[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i].outOfBounds()) {
+                objects[i] = objects[objects.length - 1];
+                objects = Arrays.copyOf(objects, objects.length - 1);
             }
         }
     }
 
-    // 1.4 调用豌豆射手的射击子弹方法
+    /**
+     * 1.4 调用豌豆射手的射击子弹方法
+     */
     private void shootAction() {
         shootIndex++;
-        int shootinterval = 200;
-        if (shootIndex > 2000)
-            shootinterval = 100;
-        if (shootIndex % shootinterval == 0) {
-            for (int i = 0; i < beanShooters.length; i++) {
-                BeanBullet beanBullet = beanShooters[i].shoot();// 射出一颗子弹
+        int shootInterval = 200;
+        if (shootIndex > 2000) {
+            shootInterval = 100;
+        }
+        if (shootIndex % shootInterval == 0) {
+            for (BeanShooter beanShooter : beanShooters) {
+                // 射出一颗子弹
+                BeanBullet beanBullet = beanShooter.shoot();
                 // 数组扩容
                 beanBullets = Arrays.copyOf(beanBullets, beanBullets.length + 1);
                 beanBullets[beanBullets.length - 1] = beanBullet;
@@ -899,7 +977,9 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    // 1.5 碰撞处理操作
+    /**
+     * 1.5 碰撞处理操作
+     */
     private void hitAction() {
         // 处理豌豆子弹与僵尸的碰撞操作
         // 遍历豌豆子弹
@@ -909,12 +989,11 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         // 门前小车与僵尸的碰撞操作
         // 遍历cars数组
         for (int i = 0; i < cars.length; i++) {
-            for (int j = 0; j < zombies.length; j++)// 遍历僵尸数组
-            {
+            // 遍历僵尸数组
+            for (int j = 0; j < zombies.length; j++) {
+                // 此时要控制car与zombie在同一行
                 if (cars[i].hitByZombie(zombies[j]) && posToRowAndColumn(cars[i].x, cars[i].y)[0] == posToRowAndColumn(
-                        zombies[j].x + zombies[j].width, zombies[j].y + zombies[j].height)[0])// 此时要控制car与zombie在同一行
-                {
-
+                        zombies[j].x + zombies[j].width, zombies[j].y + zombies[j].height)[0]) {
                     System.out.print("row_car " + (i + 1) + " : " + posToRowAndColumn(cars[i].x, cars[i].y)[0]);
                     System.out.println(" ; row_zombie " + (j + 1) + " : " + posToRowAndColumn(
                             zombies[j].x + zombies[j].width, zombies[j].y + zombies[j].height)[0]);
@@ -926,7 +1005,7 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
         // 滚动坚果与僵尸的碰撞操作
         // 遍历wallNut_roll数组
-        for (WallNut_roll wallNut_roll : wallNuts_roll) {
+        for (WallNutRoll wallNut_roll : wallNutsRoll) {
             // 遍历僵尸数组
             for (BaseMovingObject zombie : zombies) {
                 // 此时要控制car与zombie在同一行
@@ -942,26 +1021,27 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
         // 防御坚果与僵尸的碰撞操作
         // 遍历wallNut数组
-        for (int i = 0; i < wallNuts.length; i++) {
-            for (int j = 0; j < zombies.length; j++)// 遍历僵尸数组
-            {
-                if (wallNuts[i].hitByZombie(zombies[j]) && posToRowAndColumn(wallNuts[i].x + wallNuts[i].width / 2,
-                        wallNuts[i].y + wallNuts[i].height)[0] == posToRowAndColumn(zombies[j].x + zombies[j].width,
-                        zombies[j].y + zombies[j].height)[0])// 此时要控制car与zombie在同一行
-                {
-                    wallNuts[i].removeOneLife();
-                    zombies[j].stopMoving();// 使僵尸停止运动
-                    zombies[j].startAttacking();// 变为攻击状态
+        for (WallNut wallNut : wallNuts) {
+            // 遍历僵尸数组
+            for (BaseMovingObject zombie : zombies) {
+                // 此时要控制car与zombie在同一行
+                if (wallNut.hitByZombie(zombie) && posToRowAndColumn(wallNut.x + wallNut.width / 2,
+                        wallNut.y + wallNut.height)[0] == posToRowAndColumn(zombie.x + zombie.width,
+                        zombie.y + zombie.height)[0]) {
+                    wallNut.removeOneLife();
+                    zombie.stopMoving();// 使僵尸停止运动
+                    zombie.startAttacking();// 变为攻击状态
                     // 变换僵尸为攻击状态
-                    if (wallNuts[i].getCurrentLife() <= 0) {
+                    if (wallNut.getCurrentLife() <= 0) {
                         // 坚果死亡后，与坚果同行的僵尸继续运动，恢复正常状态
-                        for (int k = 0; k < zombies.length; k++)
-                            if (posToRowAndColumn(wallNuts[i].x + wallNuts[i].width / 2,
-                                    wallNuts[i].y + wallNuts[i].height)[0] == posToRowAndColumn(
-                                    zombies[k].x + zombies[k].width, zombies[k].y + zombies[k].height)[0]) {
-                                zombies[k].startMoving();// 继续运动
-                                zombies[k].stopAttacking();// 状态恢复
+                        for (BaseMovingObject baseMovingObject : zombies) {
+                            if (posToRowAndColumn(wallNut.x + wallNut.width / 2,
+                                    wallNut.y + wallNut.height)[0] == posToRowAndColumn(
+                                    baseMovingObject.x + baseMovingObject.width, baseMovingObject.y + baseMovingObject.height)[0]) {
+                                baseMovingObject.startMoving();// 继续运动
+                                baseMovingObject.stopAttacking();// 状态恢复
                             }
+                        }
                     }
                     // 此时不需要break，多个僵尸可啃食一个防御坚果
                 }
@@ -969,102 +1049,114 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
         // 太阳花与僵尸的碰撞操作
         // 遍历sunFlowers数组
-        for (int i = 0; i < sunFlowers.length; i++) {
-            for (int j = 0; j < zombies.length; j++)// 遍历僵尸数组
-            {
-                int row_sunFlower = posToRowAndColumn(sunFlowers[i].x + sunFlowers[i].width / 2,
-                        sunFlowers[i].y + sunFlowers[i].height)[0];
-                int row_zombie = posToRowAndColumn(
-                        zombies[j].x + zombies[j].width / 2, zombies[j].y + zombies[j].height)[0];
-                if (sunFlowers[i].hitByZombie(zombies[j]) && row_sunFlower == row_zombie)// 此时要控制car与zombie在同一行
-                {
-                    sunFlowers[i].removeOneLife();
-                    zombies[j].stopMoving();// 使僵尸停止运动
-                    zombies[j].startAttacking();// 变为攻击状态
+        for (SunFlower sunFlower : sunFlowers) {
+            // 遍历僵尸数组
+            for (BaseMovingObject zombie : zombies) {
+                int rowSunFlower = posToRowAndColumn(sunFlower.x + sunFlower.width / 2,
+                        sunFlower.y + sunFlower.height)[0];
+                int rowZombie = posToRowAndColumn(
+                        zombie.x + zombie.width / 2, zombie.y + zombie.height)[0];
+                // 此时要控制car与zombie在同一行
+                if (sunFlower.hitByZombie(zombie) && rowSunFlower == rowZombie) {
+                    sunFlower.removeOneLife();
+                    // 使僵尸停止运动
+                    zombie.stopMoving();
+                    // 变为攻击状态
+                    zombie.startAttacking();
                     // 变换僵尸为攻击状态
-                    if (sunFlowers[i].getCurrentLife() <= 0) {
-                        for (int k = 0; k < zombies.length; k++)
-                            if (row_sunFlower == posToRowAndColumn(
-                                    zombies[k].x + zombies[k].width / 2, zombies[k].y + zombies[k].height)[0]) {
-                                zombies[k].startMoving();// 继续运动
-                                zombies[k].stopAttacking();// 状态恢复
+                    if (sunFlower.getCurrentLife() <= 0) {
+                        for (BaseMovingObject baseMovingObject : zombies) {
+                            if (rowSunFlower == posToRowAndColumn(
+                                    baseMovingObject.x + baseMovingObject.width / 2, baseMovingObject.y + baseMovingObject.height)[0]) {
+                                // 继续运动
+                                baseMovingObject.startMoving();
+                                // 状态恢复
+                                baseMovingObject.stopAttacking();
                             }
+                        }
                     }
                 }
             }
         }
         // 遍历beanShooters数组
-        for (int i = 0; i < beanShooters.length; i++) {
-            for (int j = 0; j < zombies.length; j++)// 遍历僵尸数组
-            {
-                if (beanShooters[i].hitByZombie(zombies[j])
-                        && posToRowAndColumn(beanShooters[i].x + beanShooters[i].width / 2,
-                        beanShooters[i].y + beanShooters[i].height)[0] == posToRowAndColumn(
-                        zombies[j].x + zombies[j].width / 2, zombies[j].y + zombies[j].height)[0])// 此时要控制car与zombie在同一行
-                {
-                    beanShooters[i].removeOneLife();
-                    zombies[j].stopMoving();// 使僵尸停止运动
-                    zombies[j].startAttacking();// 变为攻击状态
+        for (BeanShooter beanShooter : beanShooters) {
+            // 遍历僵尸数组
+            for (BaseMovingObject zombie : zombies) {
+                if (beanShooter.hitByZombie(zombie)
+                        && posToRowAndColumn(beanShooter.x + beanShooter.width / 2,
+                        beanShooter.y + beanShooter.height)[0] == posToRowAndColumn(
+                        // 此时要控制car与zombie在同一行
+                        zombie.x + zombie.width / 2, zombie.y + zombie.height)[0]) {
+                    beanShooter.removeOneLife();
+                    // 使僵尸停止运动
+                    zombie.stopMoving();
+                    // 变为攻击状态
+                    zombie.startAttacking();
                     // 变换僵尸为攻击状态
-                    if (beanShooters[i].getCurrentLife() <= 0) {
-                        for (int k = 0; k < zombies.length; k++)
-                            if (posToRowAndColumn(beanShooters[i].x + beanShooters[i].width / 2,
-                                    beanShooters[i].y + beanShooters[i].height)[0] == posToRowAndColumn(
-                                    zombies[k].x + zombies[k].width / 2, zombies[k].y + zombies[k].height)[0]) {
-                                zombies[k].startMoving();// 继续运动
-                                zombies[k].stopAttacking();// 状态恢复
+                    if (beanShooter.getCurrentLife() <= 0) {
+                        for (BaseMovingObject baseMovingObject : zombies) {
+                            if (posToRowAndColumn(beanShooter.x + beanShooter.width / 2,
+                                    beanShooter.y + beanShooter.height)[0] == posToRowAndColumn(
+                                    baseMovingObject.x + baseMovingObject.width / 2, baseMovingObject.y + baseMovingObject.height)[0]) {
+                                // 继续运动
+                                baseMovingObject.startMoving();
+                                // 状态恢复
+                                baseMovingObject.stopAttacking();
                             }
+                        }
                     }
                 }
             }
         }
         // 遍历potatoMines数组
-        for (int i = 0; i < potatoMines.length; i++) {
-            for (int j = 0; j < zombies.length; j++)// 遍历僵尸数组
-            {
-                if (potatoMines[i].hitByZombie(zombies[j])
-                        && posToRowAndColumn(potatoMines[i].x + potatoMines[i].width / 2,
-                        potatoMines[i].y + potatoMines[i].height)[0] == posToRowAndColumn(
-                        zombies[j].x + zombies[j].width / 2, zombies[j].y + zombies[j].height)[0])// 此时要控制car与zombie在同一行
-                {
-                    potatoMines[i].Bomb();// 地雷爆炸方法
-                    clearIndex = 1;// 保证僵尸爆炸图片显示一段时间
-                    zombies[j].startBombing();
+        for (PotatoMine potatoMine : potatoMines) {
+            // 遍历僵尸数组
+            for (BaseMovingObject zombie : zombies) {
+                if (potatoMine.hitByZombie(zombie)
+                        && posToRowAndColumn(potatoMine.x + potatoMine.width / 2,
+                        potatoMine.y + potatoMine.height)[0] == posToRowAndColumn(
+                        // 此时要控制car与zombie在同一行
+                        zombie.x + zombie.width / 2, zombie.y + zombie.height)[0]) {
+                    // 地雷爆炸方法
+                    potatoMine.Bomb();
+                    // 保证僵尸爆炸图片显示一段时间
+                    clearIndex = 1;
+                    zombie.startBombing();
                     break;
                 }
             }
         }
         // 太阳花与僵尸的碰撞操作
         // 遍历cherryBombs数组
-        for (int i = 0; i < cherryBombs.length; i++) {
-            for (int j = 0; j < zombies.length; j++)// 遍历僵尸数组
-            {
-                int cherry_row = posToRowAndColumn(cherryBombs[i].x + cherryBombs[i].width / 2,
-                        cherryBombs[i].y + cherryBombs[i].height)[0];
-                int cherry_column = posToRowAndColumn(cherryBombs[i].x + cherryBombs[i].width / 2,
-                        cherryBombs[i].y + cherryBombs[i].height)[1];
-                // System.out.println("cherry_row: " + (cherry_row + 1) + ", cherry_column:" +
-                // (cherry_column + 1));
-                int zombie_row = posToRowAndColumn(zombies[j].x + zombies[j].width / 2,
-                        zombies[j].y + zombies[j].height)[0];
-                int zombie_column = posToRowAndColumn(zombies[j].x + zombies[j].width / 2,
-                        zombies[j].y + zombies[j].height)[1];
-                if (cherryBombs[i].hitByZombie(zombies[j]) && cherry_row == zombie_row)// 此时要控制car与zombie在同一行
-                {
-                    cherryBombs[i].Bomb();// 樱桃爆炸方法
-                    clearIndex = 1;// 保证僵尸爆炸图片显示一段时间
-                    for (int k = 0; k < zombies.length; k++) {
+        for (CherryBomb cherryBomb : cherryBombs) {
+            // 遍历僵尸数组
+            for (BaseMovingObject zombie : zombies) {
+                int cherry_row = posToRowAndColumn(cherryBomb.x + cherryBomb.width / 2,
+                        cherryBomb.y + cherryBomb.height)[0];
+                int cherry_column = posToRowAndColumn(cherryBomb.x + cherryBomb.width / 2,
+                        cherryBomb.y + cherryBomb.height)[1];
+                int zombie_row = posToRowAndColumn(zombie.x + zombie.width / 2,
+                        zombie.y + zombie.height)[0];
+                int zombie_column;
+                // 此时要控制car与zombie在同一行
+                if (cherryBomb.hitByZombie(zombie) && cherry_row == zombie_row) {
+                    // 樱桃爆炸方法
+                    cherryBomb.Bomb();
+                    // 保证僵尸爆炸图片显示一段时间
+                    clearIndex = 1;
+                    for (BaseMovingObject baseMovingObject : zombies) {
                         // 注意樱桃炸弹可炸毁周围(上下左右)区域的所有僵尸
-                        zombie_row = posToRowAndColumn(zombies[k].x + zombies[k].width / 2,
-                                zombies[k].y + zombies[k].height)[0];
-                        zombie_column = posToRowAndColumn(zombies[k].x + zombies[k].width / 2,
-                                zombies[k].y + zombies[k].height)[1];
+                        zombie_row = posToRowAndColumn(baseMovingObject.x + baseMovingObject.width / 2,
+                                baseMovingObject.y + baseMovingObject.height)[0];
+                        zombie_column = posToRowAndColumn(baseMovingObject.x + baseMovingObject.width / 2,
+                                baseMovingObject.y + baseMovingObject.height)[1];
                         if ((zombie_row == cherry_row && zombie_column >= cherry_column - 1
                                 && zombie_column <= cherry_column + 1)
                                 || (zombie_column == cherry_column && zombie_row >= zombie_row - 1
                                 && zombie_row <= zombie_row + 1)) {
                             // 十字架范围爆炸
-                            zombies[k].startBombing();// 僵尸爆炸方法
+                            // 僵尸爆炸方法
+                            baseMovingObject.startBombing();
                         }
                     }
                 }
@@ -1074,12 +1166,15 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
 
     // 1.5.1 子弹hit僵尸操作
     private void hitZombie(BeanBullet beanBullet, int beanBulletIndex) {
-        int hitIndex = -1;// 子弹beanBullet碰撞到的僵尸编号
+        // 子弹beanBullet碰撞到的僵尸编号
+        int hitIndex = -1;
         // 遍历僵尸数组
         for (int i = 0; i < zombies.length; i++) {
             if (zombies[i].hitByBullet(beanBullet)) {
-                hitIndex = i;// 更新碰撞僵尸编号
-                break;// 检测到碰撞，立刻退出
+                // 更新碰撞僵尸编号
+                hitIndex = i;
+                // 检测到碰撞，立刻退出
+                break;
             }
         }
         // 碰撞处理操作
@@ -1090,83 +1185,75 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             // 消除豌豆子弹
             beanBullets[beanBulletIndex] = beanBullets[beanBullets.length - 1];
             beanBullets = Arrays.copyOf(beanBullets, beanBullets.length - 1);
-            zombies[hitIndex].removeOneLife();// 被击中的僵尸生命值减1
+            // 被击中的僵尸生命值减1
+            zombies[hitIndex].removeOneLife();
             // 注意：这里不进行僵尸生命值减为0时，消除僵尸对象的操作
         }
     }
 
-    // 1.6 清除所有已死亡对象
-    private void clearDeadObjects() {
+    /**
+     * 1.6 清除所有已死亡对象
+     */
+    private void clearAllDeadObjects() {
         // 依次遍历僵尸数组，若僵尸生命值减为0，则消除该僵尸对象
         clearIndex++;
-        if (clearIndex % 200 == 0)// 为了暂留僵尸死亡效果
-        {
+        // 为了暂留僵尸死亡效果
+        if (clearIndex % 200 == 0) {
             // 清除死亡僵尸
-            for (int i = 0; i < zombies.length; i++) {
-                if (zombies[i].getCurrentLife() <= 0) {
-                    zombies[i] = zombies[zombies.length - 1];
-                    zombies = Arrays.copyOf(zombies, zombies.length - 1);
-                }
-            }
+            clearDeadObjects(zombies);
         }
-        if (clearIndex % 100 == 0)// 为了暂留爆炸樱桃和土豆地雷爆炸效果
-        {
+        // 为了暂留爆炸樱桃和土豆地雷爆炸效果
+        if (clearIndex % 100 == 0) {
             // 清除死亡樱桃
-            for (int i = 0; i < cherryBombs.length; i++) {
-                if (cherryBombs[i].getCurrentLife() <= 0) {
-                    cherryBombs[i] = cherryBombs[cherryBombs.length - 1];
-                    cherryBombs = Arrays.copyOf(cherryBombs, cherryBombs.length - 1);
-                }
-            }
+            clearDeadObjects(cherryBombs);
             // 清除死亡土豆地雷
-            for (int i = 0; i < potatoMines.length; i++) {
-                if (potatoMines[i].getCurrentLife() <= 0) {
-                    potatoMines[i] = potatoMines[potatoMines.length - 1];
-                    potatoMines = Arrays.copyOf(potatoMines, potatoMines.length - 1);
-                }
-            }
+            clearDeadObjects(potatoMines);
         }
         // 实时清除死亡防御坚果，不等待
-        for (int i = 0; i < wallNuts.length; i++) {
-            if (wallNuts[i].getCurrentLife() <= 0) {
-                wallNuts[i] = wallNuts[wallNuts.length - 1];
-                wallNuts = Arrays.copyOf(wallNuts, wallNuts.length - 1);
-            }
-        }
+        clearDeadObjects(wallNuts);
         // 实时清除死亡太阳花，不等待
-        for (int i = 0; i < sunFlowers.length; i++) {
-            if (sunFlowers[i].getCurrentLife() <= 0) {
-                sunFlowers[i] = sunFlowers[sunFlowers.length - 1];
-                sunFlowers = Arrays.copyOf(sunFlowers, sunFlowers.length - 1);
-            }
-        }
+        clearDeadObjects(sunFlowers);
         // 实时清除死亡豌豆射手，不等待
-        for (int i = 0; i < beanShooters.length; i++) {
-            if (beanShooters[i].getCurrentLife() <= 0) {
-                beanShooters[i] = beanShooters[beanShooters.length - 1];
-                beanShooters = Arrays.copyOf(beanShooters, beanShooters.length - 1);
+        clearDeadObjects(beanShooters);
+    }
+
+    /**
+     * 清除单类死亡物体
+     *
+     * @param objects 物体列表
+     */
+    private void clearDeadObjects(BaseMovingObject[] objects) {
+        for (int i = 0; i < objects.length; i++) {
+            if (objects[i].getCurrentLife() <= 0) {
+                objects[i] = objects[objects.length - 1];
+                objects = Arrays.copyOf(objects, objects.length - 1);
             }
         }
     }
 
     // 1.8 更新当前场景
     private void updateScene() {
-        if (isDaytime)
+        if (isDaytime) {
             img_yard = img_daytime_scene;
-        else
+        } else {
             img_yard = img_night_scene;
+        }
         // 冰冻模式
         if (isIceMode) {
-            for (int i = 0; i < beanShooters.length; i++)
-                beanShooters[i].setIceMode();
-            for (int i = 0; i < beanBullets.length; i++)
-                beanBullets[i].setIceMode();
+            for (BeanShooter beanShooter : beanShooters) {
+                beanShooter.setIceMode();
+            }
+            for (BeanBullet beanBullet : beanBullets) {
+                beanBullet.setIceMode();
+            }
         } else {
             //非冰冻模式
-            for (int i = 0; i < beanShooters.length; i++)
-                beanShooters[i].setNormalMode();
-            for (int i = 0; i < beanBullets.length; i++)
-                beanBullets[i].setNormalMode();
+            for (BeanShooter beanShooter : beanShooters) {
+                beanShooter.setNormalMode();
+            }
+            for (BeanBullet beanBullet : beanBullets) {
+                beanBullet.setNormalMode();
+            }
         }
     }
 
@@ -1207,7 +1294,6 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                 Point point = positionToBlock(x, y);
                 x = point.x;
                 y = point.y;
-                // System.out.println("标准化后的位置：x "+point.x+", y "+point.y);
                 // 根据待种植植物编号放置植物，注意待放置的区域不能存在植物
                 if (!isPlacedToBlock(x, y)) {
                     switch (nowToBePlanted.plantIndex) {
@@ -1218,7 +1304,8 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                             // 数组扩容
                             sunFlowers = Arrays.copyOf(sunFlowers, sunFlowers.length + 1);
                             sunFlowers[sunFlowers.length - 1] = sunFlower;
-                            currentSunEnergy -= sunEnergy[0];// 去除种植耗费的能量
+                            // 去除种植耗费的能量
+                            currentSunEnergy -= sunEnergy[0];
                             break;
                         case 1:
                             // 添加豌豆射手对象
@@ -1227,7 +1314,8 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                             // 数组扩容
                             beanShooters = Arrays.copyOf(beanShooters, beanShooters.length + 1);
                             beanShooters[beanShooters.length - 1] = beanShooter;
-                            currentSunEnergy -= sunEnergy[1];// 去除种植耗费的能量
+                            // 去除种植耗费的能量
+                            currentSunEnergy -= sunEnergy[1];
                             break;
                         case 2:
                             // 添加防御坚果对象
@@ -1236,7 +1324,8 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                             // 数组扩容
                             wallNuts = Arrays.copyOf(wallNuts, wallNuts.length + 1);
                             wallNuts[wallNuts.length - 1] = wallNut;
-                            currentSunEnergy -= sunEnergy[2];// 去除种植耗费的能量
+                            // 去除种植耗费的能量
+                            currentSunEnergy -= sunEnergy[2];
                             break;
                         case 3:
                             // 添加爆炸樱桃对象
@@ -1245,7 +1334,8 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                             // 数组扩容
                             cherryBombs = Arrays.copyOf(cherryBombs, cherryBombs.length + 1);
                             cherryBombs[cherryBombs.length - 1] = cherryBomb;
-                            currentSunEnergy -= sunEnergy[3];// 去除种植耗费的能量
+                            // 去除种植耗费的能量
+                            currentSunEnergy -= sunEnergy[3];
                             break;
                         case 4:
                             // 添加土豆地雷对象
@@ -1254,16 +1344,18 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                             // 数组扩容
                             potatoMines = Arrays.copyOf(potatoMines, potatoMines.length + 1);
                             potatoMines[potatoMines.length - 1] = potatoMine;
-                            currentSunEnergy -= sunEnergy[4];// 去除种植耗费的能量
+                            // 去除种植耗费的能量
+                            currentSunEnergy -= sunEnergy[4];
                             break;
                         case 5:
                             // 添加滚动坚果对象
-                            WallNut_roll wallNut_roll = new WallNut_roll(x - img_wallNuts_roll[0].getWidth() / 2,
+                            WallNutRoll wallNut_roll = new WallNutRoll(x - img_wallNuts_roll[0].getWidth() / 2,
                                     y - img_wallNuts_roll[0].getHeight() / 2);
                             // 数组扩容
-                            wallNuts_roll = Arrays.copyOf(wallNuts_roll, wallNuts_roll.length + 1);
-                            wallNuts_roll[wallNuts_roll.length - 1] = wallNut_roll;
-                            currentSunEnergy -= sunEnergy[5];// 去除种植耗费的能量
+                            wallNutsRoll = Arrays.copyOf(wallNutsRoll, wallNutsRoll.length + 1);
+                            wallNutsRoll[wallNutsRoll.length - 1] = wallNut_roll;
+                            // 去除种植耗费的能量
+                            currentSunEnergy -= sunEnergy[5];
                             break;
                         default:
                             break;
@@ -1276,84 +1368,107 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
         // 2. 点击阳光
         // 依次遍历太阳数组判断阳光是否被收集 (注意收集条件：未待铲除且未待种植)
-        if (!shovel_used && nowToBePlanted == null)
-            for (int i = 0; i < suns.length; i++) {
-                if (!suns[i].collected && suns[i].isCollected(x, y))// 注意：这里先不从太阳数组中去除该太阳对象
+        if (!shovel_used && nowToBePlanted == null) {
+            for (Sun sun : suns) {
+                // 注意：这里先不从太阳数组中去除该太阳对象
+                if (!sun.collected && sun.isCollected(x, y)) {
                     currentSunEnergy += 50;
+                }
             }
+        }
         // 3. 铲除植物 (种植区域内)
         if (shovel_used && (x > 250 && x < 970 && y > 55 && y < 570)) {
             // 根据铁铲点击位置铲除植物
             removePlant(x, y);
-            shovel.resetPositionToBank();// 恢复铁铲位置
-            shovel_used = false;// 标记未使用铁铲
-            shadow = null;// 阴影区域去除
+            // 恢复铁铲位置
+            shovel.resetPositionToBank();
+            // 标记未使用铁铲
+            shovel_used = false;
+            // 阴影区域去除
+            shadow = null;
         }
         // 4. 点击铁铲槽(470,15) 注意：3与4的先后位置，且点击铲槽时不能有待种植的植物
         if (nowToBePlanted == null && x >= 470 && x <= 470 + img_shovelBank.getWidth() && y >= 15
                 && y <= 15 + img_shovelBank.getHeight())
-            shovel_used = !shovel_used;// 更改铁铲使用状态
+        // 更改铁铲使用状态
+        {
+            shovel_used = !shovel_used;
+        }
         // 5. 点击场景切换按钮
         // 夜晚场景
-        if (x >= 900 && x <= 900 + img_night_button.getWidth() && y >= 10 && y <= 10 + img_night_button.getHeight())
+        if (x >= 900 && x <= 900 + img_night_button.getWidth() && y >= 10 && y <= 10 + img_night_button.getHeight()) {
             isDaytime = false;
+        }
         // 白天场景
-        if (x >= 1000 && x <= 1000 + img_daytime_button.getWidth() && y >= 10 && y <= 10 + img_daytime_button.getHeight())
+        if (x >= 1000 && x <= 1000 + img_daytime_button.getWidth() && y >= 10 && y <= 10 + img_daytime_button.getHeight()) {
             isDaytime = true;
+        }
         // 冰冻场景
-        if (x >= 1100 && x <= 1100 + img_snow_button.getWidth() && y >= 10 && y <= 10 + img_snow_button.getHeight())
+        if (x >= 1100 && x <= 1100 + img_snow_button.getWidth() && y >= 10 && y <= 10 + img_snow_button.getHeight()) {
             isIceMode = !isIceMode;
+        }
     }
 
     // 辅助方法：判断某区域(以左上角x,y坐标给出)是否存在植物
     private boolean isPlacedToBlock(int x, int y) {
-        // 一些需要的变量
-        // -------------------------------------------------------------
         int x_left = 250;
         int x_right = 970;
         int y_up = 55;
         int y_down = 570;
-        int rowsNum = 5;// 行数
-        int columnsNum = 9;// 列数
-        int x_step = (x_right - x_left) / columnsNum;// 网格宽度
-        int y_step = (y_down - y_up) / rowsNum;// 网格高度
-        // -------------------------------------------------------------
+        // 行数
+        int rowsNum = 5;
+        // 列数
+        int columnsNum = 9;
+        // 网格宽度
+        int x_step = (x_right - x_left) / columnsNum;
+        // 网格高度
+        int y_step = (y_down - y_up) / rowsNum;
         // 遍历太阳花
-        for (int i = 0; i < sunFlowers.length; i++) {
-            int plantX = sunFlowers[i].x + sunFlowers[i].width / 2;// 植物中心X坐标
-            int plantY = sunFlowers[i].y + sunFlowers[i].height / 2;// 植物中心Y坐标
+        for (SunFlower sunFlower : sunFlowers) {
+            // 植物中心X坐标
+            int plantX = sunFlower.x + sunFlower.width / 2;
+            // 植物中心Y坐标
+            int plantY = sunFlower.y + sunFlower.height / 2;
             if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
                 return true;
             }
         }
         // 遍历豌豆射手
-        for (int i = 0; i < beanShooters.length; i++) {
-            int plantX = beanShooters[i].x + beanShooters[i].width / 2;// 植物中心X坐标
-            int plantY = beanShooters[i].y + beanShooters[i].height / 2;// 植物中心Y坐标
+        for (BeanShooter beanShooter : beanShooters) {
+            // 植物中心X坐标
+            int plantX = beanShooter.x + beanShooter.width / 2;
+            // 植物中心Y坐标
+            int plantY = beanShooter.y + beanShooter.height / 2;
             if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
                 return true;
             }
         }
         // 遍历防御坚果
-        for (int i = 0; i < wallNuts.length; i++) {
-            int plantX = wallNuts[i].x + wallNuts[i].width / 2;// 植物中心X坐标
-            int plantY = wallNuts[i].y + wallNuts[i].height / 2;// 植物中心Y坐标
+        for (WallNut wallNut : wallNuts) {
+            // 植物中心X坐标
+            int plantX = wallNut.x + wallNut.width / 2;
+            // 植物中心Y坐标
+            int plantY = wallNut.y + wallNut.height / 2;
             if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
                 return true;
             }
         }
         // 遍历樱桃炸弹
-        for (int i = 0; i < cherryBombs.length; i++) {
-            int plantX = cherryBombs[i].x + cherryBombs[i].width / 2;// 植物中心X坐标
-            int plantY = cherryBombs[i].y + cherryBombs[i].height / 2;// 植物中心Y坐标
+        for (CherryBomb cherryBomb : cherryBombs) {
+            // 植物中心X坐标
+            int plantX = cherryBomb.x + cherryBomb.width / 2;
+            // 植物中心Y坐标
+            int plantY = cherryBomb.y + cherryBomb.height / 2;
             if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
                 return true;
             }
         }
         // 遍历土豆地雷
-        for (int i = 0; i < potatoMines.length; i++) {
-            int plantX = potatoMines[i].x + potatoMines[i].width / 2;// 植物中心X坐标
-            int plantY = potatoMines[i].y + potatoMines[i].height / 2;// 植物中心Y坐标
+        for (PotatoMine potatoMine : potatoMines) {
+            // 植物中心X坐标
+            int plantX = potatoMine.x + potatoMine.width / 2;
+            // 植物中心Y坐标
+            int plantY = potatoMine.y + potatoMine.height / 2;
             if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
                 return true;
             }
@@ -1361,7 +1476,12 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         return false;
     }
 
-    // 根据铁铲点击位置铲除植物
+    /**
+     * 根据铁铲点击位置铲除植物
+     *
+     * @param x 横坐标
+     * @param y 纵坐标
+     */
     private void removePlant(int x, int y) {
 
         int x_left = 250;
@@ -1397,8 +1517,10 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
         // 遍历豌豆射手
         for (BeanShooter beanShooter : beanShooters) {
-            int plantX = beanShooter.x + beanShooter.width / 2;// 植物中心X坐标
-            int plantY = beanShooter.y + beanShooter.height / 2;// 植物中心Y坐标
+            // 植物中心X坐标
+            int plantX = beanShooter.x + beanShooter.width / 2;
+            // 植物中心Y坐标
+            int plantY = beanShooter.y + beanShooter.height / 2;
             if (plantX >= removeX && plantX < removeX + xStep && plantY >= removeY && plantY < removeY + yStep) {
                 // 去除植物对象
                 // 注意这里不直接去除植物对象，而是设置植物生命值为0，由clearObjects()方法完成植物清除操作
@@ -1455,7 +1577,13 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    // 根据物体(植物or僵尸)中心位置x和y，确定物体所处草坪区域块的行号和列号 (行：5 列9)
+    /**
+     * 根据物体(植物or僵尸)中心位置x和y，确定物体所处草坪区域块的行号和列号 (行：5 列9)
+     *
+     * @param x 横坐标
+     * @param y 纵坐标
+     * @return 草坪行列号
+     */
     private int[] posToRowAndColumn(int x, int y) {
         int x_left = 250;
         int x_right = 970;
@@ -1490,7 +1618,13 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         return new int[]{row, column};
     }
 
-    // 根据植物放置时点击的鼠标位置x和y，确定植物放置的区域块（共45块）
+    /**
+     * 根据植物放置时点击的鼠标位置x和y，确定植物放置的区域块（共45块）
+     *
+     * @param x 横坐标
+     * @param y 纵坐标
+     * @return 植物中心位置
+     */
     private Point positionToBlock(int x, int y) {
         int x_left = 250;
         int x_right = 970;

@@ -10,13 +10,13 @@ import panels_and_resources.MainGamePanel;
  *
  * @author LeoHao
  */
-public class WallNut_roll extends BaseMovingObject {
+public class WallNutRoll extends BaseMovingObject {
     private BufferedImage[] images;// 图片集
     private int index;// 图片转换值
     private boolean hitByZombie;
 
     // 根据玩家拖动的位置构造植物
-    public WallNut_roll(int dragX, int dragY) {
+    public WallNutRoll(int dragX, int dragY) {
 
         // 公共属性初始化
         image = MainGamePanel.img_wallNuts_roll[0];// 初始化图片为图片集第一张图片
