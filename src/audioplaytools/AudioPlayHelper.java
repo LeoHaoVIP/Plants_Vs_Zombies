@@ -9,10 +9,15 @@ import java.net.URL;
  *
  * @author LeoHao
  */
-public class audioPlayHelper {
-    static AudioClip audioPlayer;
+public class AudioPlayHelper {
+    private static AudioClip audioPlayer;
 
-    public static void open(URL url) {//背景音乐播放
+    /**
+     * 背景音乐播放
+     *
+     * @param url 音频路径
+     */
+    public static void open(URL url) {
         audioPlayer = Applet.newAudioClip(url);
         audioPlayer.loop();
     }

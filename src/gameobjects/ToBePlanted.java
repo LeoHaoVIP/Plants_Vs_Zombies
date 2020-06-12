@@ -8,8 +8,11 @@ import java.awt.image.BufferedImage;
  *
  * @author LeoHao
  */
-public class ToBePlanted extends Base_MovingObject {
-    public int plantIndex;// 待种植植物编号
+public class ToBePlanted extends BaseMovingObject {
+    /**
+     * 待种植植物编号
+     */
+    public int plantIndex;
 
     public ToBePlanted(BufferedImage image, int plantIndex, int x, int y) {
 
@@ -23,19 +26,20 @@ public class ToBePlanted extends Base_MovingObject {
 
     @Override
     public void step() {
-
-
     }
 
     @Override
     public boolean outOfBounds() {
-
         return false;
     }
 
-    // 更新位置
+    /**
+     * 更新位置
+     *
+     * @param x 横坐标
+     * @param y 纵坐标
+     */
     public void updatePosition(int x, int y) {
-
         this.x = x;
         this.y = y;
     }

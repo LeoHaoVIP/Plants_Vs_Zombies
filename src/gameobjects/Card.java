@@ -15,7 +15,7 @@ public class Card {
     public int height;
     public int x, y;
 
-    public Card(BufferedImage image, int x, int y) {
+    Card(BufferedImage image, int x, int y) {
         this.image = image;
         width = image.getWidth();
         height = image.getHeight();

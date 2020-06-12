@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import gameobjects.BeanBullet;
 import gameobjects.Car;
 import gameobjects.Card;
-import gameobjects.Base_MovingObject;
+import gameobjects.BaseMovingObject;
 import gameobjects.Shadow;
 import gameobjects.Shovel;
 import gameobjects.Sun;
@@ -76,102 +76,198 @@ import zombies.ZombiePoleVaulting;
  * 21. 程序运行卡慢的问题解决 OK
  * 22. 主界面中添加其他小游戏 OK
  */
-@SuppressWarnings("serial")
 public class MainGamePanel extends JPanel implements Runnable, MouseListener, MouseMotionListener {
     /**
      * 1. 全局变量定义
      */
-    // 1.1 庭院和门前小车背景图片
-    public static BufferedImage img_yard;
-    public static int initial_carNum = 5;
+    /**
+     * 1.1 庭院和门前小车背景图片
+     */
+    private static BufferedImage img_yard;
     public static BufferedImage img_car;
-    public static Car[] cars;
-    // 1.2 待种植植物(阴影显示)
-    public static ToBePlanted nowToBePlanted;
-    // 1.3 各类植物待种植图片集
-    public static BufferedImage[] imgs_toBePlanted;
-    // 1.4 太阳池卡槽
+    private static Car[] cars;
+    /**
+     * 1.2 待种植植物(阴影显示)
+     */
+    private static ToBePlanted nowToBePlanted;
+    /**
+     * 1.3 各类植物待种植图片集
+     */
+    private static BufferedImage[] imgsToBePlanted;
+    /**
+     * 1.4 太阳池卡槽
+     */
     public static BufferedImage img_sunBank;
-    public static SunBank sunBank;
-    // 1.5 当前太阳池能量
-    public static int currentSunEnergy = 500;// 初始化为500
-    // 1.6 太阳花sunFlower图片集
+    private static SunBank sunBank;
+    /**
+     * 1.5 当前太阳池能量
+     * 初始化为500
+     */
+    public static int currentSunEnergy = 500;
+    /**
+     * 1.6 太阳花sunFlower图片集
+     */
     public static BufferedImage[] img_sunFlowers;
-    // 1.7 太阳花数组
-    SunFlower[] sunFlowers = {};// 动态数组(当用户种植时，数组元素增加1个)
-    // 1.8 各类植物种植所需能量值数组
-    public static int[] sunEnergy = {50, 100, 50, 150, 25, 0};// 太阳花、豌豆射手、防御坚果、爆炸樱桃、土豆地雷
-    // 1.9 豌豆射手beanShooter图片集
+    /**
+     * 1.7 太阳花数组
+     * 动态数组(当用户种植时，数组元素增加1个)
+     */
+    private SunFlower[] sunFlowers = {};
+    /**
+     * 1.8 各类植物种植所需能量值数组
+     * 太阳花、豌豆射手、防御坚果、爆炸樱桃、土豆地雷
+     */
+    public static int[] sunEnergy = {50, 100, 50, 150, 25, 0};
+    /**
+     * 1.9 豌豆射手beanShooter图片集
+     */
     public static BufferedImage[] img_beanShooters;
-    // 1.10 豌豆射手数组
-    BeanShooter[] beanShooters = {};// 动态数组(当用户种植时，数组元素增加1个)
-    // 1.11 防御坚果图片集
+    /**
+     * 1.10 豌豆射手数组
+     * 动态数组(当用户种植时，数组元素增加1个)
+     */
+    private BeanShooter[] beanShooters = {};
+    /**
+     * 1.11 防御坚果图片集
+     */
     public static BufferedImage[] img_wallNuts;
-    // 1.12 防御坚果数组
-    WallNut[] wallNuts = {};// 动态数组(当用户种植时，数组元素增加1个)
-    // 1.13 爆炸樱桃图片集
+    /**
+     * 1.12 防御坚果数组
+     * 动态数组(当用户种植时，数组元素增加1个)
+     */
+    private WallNut[] wallNuts = {};
+    /**
+     * 1.13 爆炸樱桃图片集
+     */
     public static BufferedImage[] img_cherryBombs;
-    // 1.14 爆炸樱桃数组
-    CherryBomb[] cherryBombs = {};// 动态数组(当用户种植时，数组元素增加1个)
-    // 1.15 土豆地雷图片集
+    /**
+     * 1.14 爆炸樱桃数组
+     * 动态数组(当用户种植时，数组元素增加1个)
+     */
+    private CherryBomb[] cherryBombs = {};
+    /**
+     * 1.15 土豆地雷图片集
+     */
     public static BufferedImage[] img_potatoMines;
-    // 1.16 土豆地雷数组
-    PotatoMine[] potatoMines = {};// 动态数组(当用户种植时，数组元素增加1个)
-    // 1.17 滚动坚果图片集
+    /**
+     * 1.16 土豆地雷数组
+     * 动态数组(当用户种植时，数组元素增加1个)
+     */
+    private PotatoMine[] potatoMines = {};
+    /**
+     * 1.17 滚动坚果图片集
+     */
     public static BufferedImage[] img_wallNuts_roll;
-    // 1.18 滚动坚果数组
-    WallNut_roll[] wallNuts_roll = {};// 动态数组(当用户种植时，数组元素增加1个)
-    // 1.19 第一类僵尸图片集(普通僵尸)
+    /**
+     * 1.18 滚动坚果数组
+     * 动态数组(当用户种植时，数组元素增加1个)
+     */
+    private WallNut_roll[] wallNuts_roll = {};
+    /**
+     * 1.19 第一类僵尸图片集(普通僵尸)
+     */
     public static BufferedImage[] img_zombiesNormal;
-    // 1.20 第二类僵尸图片集(撑杆僵尸)
+    /**
+     * 1.20 第二类僵尸图片集(撑杆僵尸)
+     */
     public static BufferedImage[] img_zombiesPoleVaulting;
-    // 1.21 第三类僵尸图片集(举旗僵尸)
+    /**
+     * 1.21 第三类僵尸图片集(举旗僵尸)
+     */
     public static BufferedImage[] img_zombiesFlag;
-    // 1.22 各类僵尸数组
-    Base_MovingObject[] zombies = {};// 动态僵尸数组
-    // 1.23 僵尸出现频率控制
-    int generateIndex = 0;
-    // 1.24 太阳图片集
+    /**
+     * 1.22 各类僵尸数组
+     * 动态僵尸数组
+     */
+    private BaseMovingObject[] zombies = {};
+    /**
+     * 1.23 僵尸出现频率控制
+     */
+    private int generateIndex = 0;
+    /**
+     * 1.24 太阳图片集
+     */
     public static BufferedImage[] img_suns;
-    // 1.25 太阳数组
-    Sun[] suns = {};
-    // 1.26 豌豆子弹图片
+    /**
+     * 1.25 太阳数组
+     */
+    private Sun[] suns = {};
+    /**
+     * 1.26 豌豆子弹图片
+     */
     public static BufferedImage img_beanBullet;
-    // 1.26 豌豆子弹击碎图片
+    /**
+     * 1.26 豌豆子弹击碎图片
+     */
     public static BufferedImage img_beanBulletHit;
-    // 1.28 豌豆子弹数组
-    BeanBullet[] beanBullets = {};// 动态子弹数组
-    // 1.29 控制射击频率
-    int shootIndex = 0;
-    // 1.30 击碎状态的子弹
-    BeanBullet beanBulletHit;
-    // 1.31 无头僵尸图片集
+    /**
+     * 1.28 豌豆子弹数组
+     * 动态子弹数组
+     */
+    private BeanBullet[] beanBullets = {};
+    /**
+     * 1.29 控制射击频率
+     */
+    private int shootIndex = 0;
+    /**
+     * 1.30 击碎状态的子弹
+     */
+    private BeanBullet beanBulletHit;
+    /**
+     * 1.31 无头僵尸图片集
+     */
     public static BufferedImage[] img_zombiesLostHead;
-    // 1.32 僵尸死亡图片集
+    /**
+     * 1.32 僵尸死亡图片集
+     */
     public static BufferedImage[] img_zombiesDie;
-    // 1.33 清除僵尸的速度
-    int clearIndex = 1;
-    // 1.34 种植区域阴影图片shadow
+    /**
+     * 1.33 清除僵尸的速度
+     */
+    private int clearIndex = 1;
+    /**
+     * 1.34 种植区域阴影图片shadow
+     */
     public static BufferedImage img_shadow;
-    // 1.35 阴影区域shadow对象
-    public static Shadow shadow;
-    // 1.36 铲槽图片
+    /**
+     * 1.35 阴影区域shadow对象
+     */
+    private static Shadow shadow;
+    /**
+     * 1.36 铲槽图片
+     */
     public static BufferedImage img_shovelBank;
-    // 1.37 铁铲图片
+    /**
+     * 1.37 铁铲图片
+     */
     public static BufferedImage img_shovel;
-    // 1.38 铁铲对象
-    public static Shovel shovel;
-    // 1.39 标记是否处于铲除植物状态
-    public static boolean shovel_used;
-    // 1.40 被啃食防御坚果图片集
+    /**
+     * 1.38 铁铲对象
+     */
+    private static Shovel shovel;
+    /**
+     * 1.39 标记是否处于铲除植物状态
+     */
+    private static boolean shovel_used;
+    /**
+     * 1.40 被啃食防御坚果图片集
+     */
     public static BufferedImage[] img_wallNutsCracked1;
-    // 1.41 被啃食防御坚果图片集
+    /**
+     * 1.41 被啃食防御坚果图片集
+     */
     public static BufferedImage[] img_wallNutsCracked2;
-    // 1.42 攻击状态僵尸图片集
+    /**
+     * 1.42 攻击状态僵尸图片集
+     */
     public static BufferedImage[] img_zombiesAttacking;
-    // 1.43 无头攻击僵尸图片集
+    /**
+     * 1.43 无头攻击僵尸图片集
+     */
     public static BufferedImage[] img_zombiesAttackingLostHead;
-    // 1.44 爆炸僵尸图片集
+    /**
+     * 1.44 爆炸僵尸图片集
+     */
     public static BufferedImage[] img_zombiesBomb;
     // 1.45 土豆地雷爆破图片
     public static BufferedImage img_potatoMineBomb;
@@ -234,10 +330,12 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             img_yard = ImageIO.read(MainGamePanel.class.getResource("img/background_game_night.jpg"));
             img_car = ImageIO.read(MainGamePanel.class.getResource("img/car.png"));
             initCars();
-            nowToBePlanted = null;// 初始化待种植植物为null
-            shadow = null;// 初始化shadow为null
+            // 初始化待种植植物为null
+            nowToBePlanted = null;
+            // 初始化shadow为null
+            shadow = null;
             // 待种植植物图片集初始化
-            imgs_toBePlanted = new BufferedImage[]{
+            imgsToBePlanted = new BufferedImage[]{
                     ImageIO.read(MainGamePanel.class.getResource("img/blurs/sunflower.png")),
                     ImageIO.read(MainGamePanel.class.getResource("img/blurs/Peashooter.png")),
                     ImageIO.read(MainGamePanel.class.getResource("img/blurs/WallNut.png")),
@@ -249,62 +347,74 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             sunBank = new SunBank();
             // 太阳花图片集初始化
             img_sunFlowers = new BufferedImage[18];
-            for (int i = 0; i < img_sunFlowers.length; i++)
+            for (int i = 0; i < img_sunFlowers.length; i++) {
                 img_sunFlowers[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/sunflower/sunflower_" + i + ".png"));
+            }
             // 豌豆射手图片集初始化
             img_beanShooters = new BufferedImage[13];
-            for (int i = 0; i < img_beanShooters.length; i++)
+            for (int i = 0; i < img_beanShooters.length; i++) {
                 img_beanShooters[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/peashooter/peashooter_" + i + ".png"));
+            }
             // 防御坚果图片集初始化
             img_wallNuts = new BufferedImage[16];
-            for (int i = 0; i < img_wallNuts.length; i++)
+            for (int i = 0; i < img_wallNuts.length; i++) {
                 img_wallNuts[i] = ImageIO.read(MainGamePanel.class.getResource("img/wallNut/wallNut_" + i + ".png"));
+            }
             // 爆炸樱桃图片集初始化
             img_cherryBombs = new BufferedImage[7];
-            for (int i = 0; i < img_cherryBombs.length; i++)
+            for (int i = 0; i < img_cherryBombs.length; i++) {
                 img_cherryBombs[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/cherryBomb/cherryBomb_" + i + ".png"));
+            }
             // 土豆地雷图片集初始化
             img_potatoMines = new BufferedImage[8];
-            for (int i = 0; i < img_potatoMines.length; i++)
+            for (int i = 0; i < img_potatoMines.length; i++) {
                 img_potatoMines[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/potatoMine/potatoMine_" + i + ".png"));
+            }
             // 滚动坚果图片集初始化
             img_wallNuts_roll = new BufferedImage[8];
-            for (int i = 0; i < img_wallNuts_roll.length; i++)
+            for (int i = 0; i < img_wallNuts_roll.length; i++) {
                 img_wallNuts_roll[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/WallNutRoll/WallNutRoll_" + i + ".png"));
+            }
             // 第一类僵尸图片集初始化
             img_zombiesNormal = new BufferedImage[22];
-            for (int i = 0; i < img_zombiesNormal.length; i++)
+            for (int i = 0; i < img_zombiesNormal.length; i++) {
                 img_zombiesNormal[i] = ImageIO.read(MainGamePanel.class.getResource("img/zombie1/frame" + i + ".png"));
+            }
             // 第二类僵尸图片集初始化
             img_zombiesPoleVaulting = new BufferedImage[10];
-            for (int i = 0; i < img_zombiesPoleVaulting.length; i++)
+            for (int i = 0; i < img_zombiesPoleVaulting.length; i++) {
                 img_zombiesPoleVaulting[i] = ImageIO.read(MainGamePanel.class.getResource("img/ZombiePoleVaulting/ZombiePoleVaulting " + i + ".png"));
+            }
             // 第三类僵尸图片集初始化
             img_zombiesFlag = new BufferedImage[12];
-            for (int i = 0; i < img_zombiesFlag.length; i++)
+            for (int i = 0; i < img_zombiesFlag.length; i++) {
                 img_zombiesFlag[i] = ImageIO.read(MainGamePanel.class.getResource("img/ZombieFlag/ZombieFlag_" + i + ".png"));
+            }
             // 太阳图片集初始化
             img_suns = new BufferedImage[22];
-            for (int i = 0; i < img_suns.length; i++)
+            for (int i = 0; i < img_suns.length; i++) {
                 img_suns[i] = ImageIO.read(MainGamePanel.class.getResource("img/sun/" + i + ".png"));
+            }
             // 豌豆子弹图片初始化
             img_beanBullet = ImageIO.read(MainGamePanel.class.getResource("img/bullets/PeaShooter.png"));
             // 豌豆子弹击碎图片初始化
             img_beanBulletHit = ImageIO.read(MainGamePanel.class.getResource("img/bullets/PeaShooterHit.png"));
             // 无头僵尸图片集初始化
             img_zombiesLostHead = new BufferedImage[18];
-            for (int i = 0; i < img_zombiesLostHead.length; i++)
+            for (int i = 0; i < img_zombiesLostHead.length; i++) {
                 img_zombiesLostHead[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombieLostHead/frame" + i + ".png"));
+            }
             // 僵尸死亡图片集初始化
             img_zombiesDie = new BufferedImage[14];
-            for (int i = 0; i < img_zombiesDie.length; i++)
+            for (int i = 0; i < img_zombiesDie.length; i++) {
                 img_zombiesDie[i] = ImageIO.read(MainGamePanel.class.getResource("img/zombieDie/frame" + i + ".png"));
+            }
             // 种植区域阴影图片shadow初始化
             img_shadow = ImageIO.read(MainGamePanel.class.getResource("img/shadow.png"));
             // 铲槽图片初始化
@@ -317,28 +427,33 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             shovel_used = false;
             // 被啃食防御坚果图片集1
             img_wallNutsCracked1 = new BufferedImage[11];
-            for (int i = 0; i < img_wallNutsCracked1.length; i++)
+            for (int i = 0; i < img_wallNutsCracked1.length; i++) {
                 img_wallNutsCracked1[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/Wallnut_cracked1/Wallnut_cracked1_" + i + ".png"));
+            }
             // 被啃食防御坚果图片集2
             img_wallNutsCracked2 = new BufferedImage[15];
-            for (int i = 0; i < img_wallNutsCracked2.length; i++)
+            for (int i = 0; i < img_wallNutsCracked2.length; i++) {
                 img_wallNutsCracked2[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/Wallnut_cracked2/Wallnut_cracked2_" + i + ".png"));
+            }
             // 攻击状态僵尸图片集
             img_zombiesAttacking = new BufferedImage[21];
-            for (int i = 0; i < img_zombiesAttacking.length; i++)
+            for (int i = 0; i < img_zombiesAttacking.length; i++) {
                 img_zombiesAttacking[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombieAttack/frame" + i + ".png"));
+            }
             // 无头攻击僵尸图片集
             img_zombiesAttackingLostHead = new BufferedImage[11];
-            for (int i = 0; i < img_zombiesAttackingLostHead.length; i++)
+            for (int i = 0; i < img_zombiesAttackingLostHead.length; i++) {
                 img_zombiesAttackingLostHead[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombieLostHeadAttack/frame" + i + ".png"));
+            }
             // 爆炸僵尸图片集
             img_zombiesBomb = new BufferedImage[21];
-            for (int i = 0; i < img_zombiesBomb.length; i++)
+            for (int i = 0; i < img_zombiesBomb.length; i++) {
                 img_zombiesBomb[i] = ImageIO.read(MainGamePanel.class.getResource("img/boom/frame" + i + ".png"));
+            }
             // 土豆地雷爆破图片
             img_potatoMineBomb = ImageIO.read(MainGamePanel.class.getResource("img/PotatoMine_Boom.png"));
             // 土豆地雷准备状态图片
@@ -347,8 +462,9 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             img_cherryBombBomb = ImageIO.read(MainGamePanel.class.getResource("img/cherryBomb_Boom.png"));
             // 准备安放植物图片集
             img_prepareGrowPlants = new BufferedImage[3];
-            for (int i = 0; i < img_prepareGrowPlants.length; i++)
+            for (int i = 0; i < img_prepareGrowPlants.length; i++) {
                 img_prepareGrowPlants[i] = ImageIO.read(MainGamePanel.class.getResource("img/PrepareGrowPlants" + (i + 1) + ".png"));
+            }
             // 一大波僵尸即将接近图片
             img_largeWave = ImageIO.read(MainGamePanel.class.getResource("img/largeWave.png"));
             //  僵尸胜利图片
@@ -360,39 +476,46 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             userWon = false;
             // 1.64 撑杆跳僵尸攻击图片集
             img_zombiesPoleVaultingAttack = new BufferedImage[14];
-            for (int i = 0; i < img_zombiesPoleVaultingAttack.length; i++)
+            for (int i = 0; i < img_zombiesPoleVaultingAttack.length; i++) {
                 img_zombiesPoleVaultingAttack[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombiePoleVaultingAttack/ZombiePoleVaultingAttack " + i + ".png"));
+            }
             // 1.64 撑杆跳僵尸无头图片集
             img_zombiesPoleVaultingLostHead = new BufferedImage[10];
-            for (int i = 0; i < img_zombiesPoleVaultingLostHead.length; i++)
+            for (int i = 0; i < img_zombiesPoleVaultingLostHead.length; i++) {
                 img_zombiesPoleVaultingLostHead[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombiePoleVaultingLostHead/ZombiePoleVaultingLostHead " + i + ".png"));
+            }
             // 1.65 撑杆跳僵尸无头攻击图片集
             img_zombiesPoleVaultingLostHeadAttack = new BufferedImage[14];
-            for (int i = 0; i < img_zombiesPoleVaultingLostHeadAttack.length; i++)
+            for (int i = 0; i < img_zombiesPoleVaultingLostHeadAttack.length; i++) {
                 img_zombiesPoleVaultingLostHeadAttack[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombiePoleVaultingLostHeadAttack/ZombiePoleVaultingLostHeadAttack " + i + ".png"));
+            }
             // 1.66 举旗僵尸攻击图片集
             img_zombiesFlagAttack = new BufferedImage[11];
-            for (int i = 0; i < img_zombiesFlagAttack.length; i++)
+            for (int i = 0; i < img_zombiesFlagAttack.length; i++) {
                 img_zombiesFlagAttack[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombieFlagAttack/ZombieFlagAttack " + i + ".png"));
+            }
             // 1.66 举旗僵尸无头图片集
             img_zombiesFlagLostHead = new BufferedImage[12];
-            for (int i = 0; i < img_zombiesFlagLostHead.length; i++)
+            for (int i = 0; i < img_zombiesFlagLostHead.length; i++) {
                 img_zombiesFlagLostHead[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombieFlagLostHead/ZombieFlagLostHead " + i + ".png"));
+            }
             // 1.66 举旗僵尸无头攻击图片集
             img_zombiesFlagLostHeadAttack = new BufferedImage[11];
-            for (int i = 0; i < img_zombiesFlagLostHeadAttack.length; i++)
+            for (int i = 0; i < img_zombiesFlagLostHeadAttack.length; i++) {
                 img_zombiesFlagLostHeadAttack[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombieFlagLostHeadAttack/ZombieFlagLostHeadAttack " + i + ".png"));
+            }
             // 1.67 撑杆跳僵尸死亡图片集
             img_zombiesPoleVaultingDie = new BufferedImage[9];
-            for (int i = 0; i < img_zombiesPoleVaultingDie.length; i++)
+            for (int i = 0; i < img_zombiesPoleVaultingDie.length; i++) {
                 img_zombiesPoleVaultingDie[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/ZombiePoleVaultingDie/ZombiePoleVaultingDie " + i + ".png"));
+            }
             // 1.66 白天场景按钮
             img_daytime_button = ImageIO.read(MainGamePanel.class.getResource("img/button_daytime.png"));
             // 1.67 夜晚场景按钮
@@ -404,9 +527,10 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             img_night_scene = ImageIO.read(MainGamePanel.class.getResource("img/background_game_night.jpg"));
             // 1.77 冷冻豌豆射手图片集
             img_beanShootersIce = new BufferedImage[15];
-            for (int i = 0; i < img_beanShootersIce.length; i++)
+            for (int i = 0; i < img_beanShootersIce.length; i++) {
                 img_beanShootersIce[i] = ImageIO
                         .read(MainGamePanel.class.getResource("img/beanShooterIce/beanShooterIce " + i + ".png"));
+            }
             // 1.78 冷冻豌豆射手子弹图片
             img_beanBulletIce = ImageIO.read(MainGamePanel.class.getResource("img/bullets/peaShooterIce.png"));
             // 1.79 雪花图片按钮图片
@@ -418,13 +542,17 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    // 2.1 初始化放置门前小车
+    /**
+     * 2.1 初始化放置门前小车
+     */
     private static void initCars() {
         int carInterval = 100;
         // 创建initial_carNum个门前小车
-        cars = new Car[initial_carNum];
-        for (int i = 0; i < initial_carNum; i++)
+        int initialCarNum = 5;
+        cars = new Car[initialCarNum];
+        for (int i = 0; i < initialCarNum; i++) {
             cars[i] = new Car(180, 70 + i * carInterval);
+        }
     }
 
     /**
@@ -454,31 +582,36 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         // 3.10 绘制游戏结束画面
         drawGameEndPicture(g);
         // 3.11 绘制场景切换按钮
-        drawScenceChangeButton(g);
+        drawSceneChangeButton(g);
     }
 
-    // 3.1 绘制庭院背景、小车、欢迎语(准备安放植物！僵尸来临)等静态物体
+    /**
+     * 3.1 绘制庭院背景、小车、欢迎语(准备安放植物！僵尸来临)等静态物体
+     *
+     * @param g
+     */
     private void paintBasicObject(Graphics g) {
         g.drawImage(img_yard, 0, 0, null);
-        for (int i = 0; i < cars.length; i++)
-            g.drawImage(cars[i].image, cars[i].x, cars[i].y, cars[i].width, cars[i].height, null);
-        // System.out.println("当前小车数量：" + car.length);
+        for (Car car : cars) {
+            g.drawImage(car.image, car.x, car.y, car.width, car.height, null);
+        }
         //绘制 准备安放植物！
         int interval = 70;
-        if (generateIndex >= 20 && generateIndex < interval)
+        if (generateIndex >= 20 && generateIndex < interval) {
             g.drawImage(img_prepareGrowPlants[0], getWidth() / 2 - 200, getHeight() / 2 - 100, null);
-        else if (generateIndex >= interval && generateIndex < 2 * interval)
+        } else if (generateIndex >= interval && generateIndex < 2 * interval) {
             g.drawImage(img_prepareGrowPlants[1], getWidth() / 2 - 200, getHeight() / 2 - 100, null);
-        else if (generateIndex >= 2 * interval && generateIndex <= 4 * interval)
+        } else if (generateIndex >= 2 * interval && generateIndex <= 4 * interval) {
             g.drawImage(img_prepareGrowPlants[2], getWidth() / 2 - 200, getHeight() / 2 - 100, null);
+        }
         // 绘制 一大波僵尸即将来临
-        if (generateIndex > 3700 && generateIndex < 4000)
+        if (generateIndex > 3700 && generateIndex < 4000) {
             g.drawImage(img_largeWave, getWidth() / 2 - 200, getHeight() / 2 - 100, null);
+        }
     }
 
     // 3.2 绘制太阳池卡槽和铲槽
     private void paintSunBank(Graphics g) {
-
         // 绘制太阳池卡槽
         g.drawImage(sunBank.image, sunBank.x, sunBank.y, null);
         for (int i = 0; i < SunBank.cards.length; i++) {
@@ -561,16 +694,23 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    // 3.10 绘制游戏结束画面
+    /**
+     * 3.10 绘制游戏结束画面
+     * @param g
+     */
     private void drawGameEndPicture(Graphics g) {
-        if (zombiesWon)
+        if (zombiesWon) {
             g.drawImage(img_zombiesWon, getWidth() / 2 - img_zombiesWon.getWidth() / 2, getHeight() / 2 - img_zombiesWon.getHeight() / 2, null);
-        if (userWon)
+        }
+        if (userWon) {
             g.drawImage(img_userWon, getWidth() / 2 - img_userWon.getWidth() / 2, getHeight() / 2 - img_userWon.getHeight() / 2, null);
+        }
     }
 
-    // 3.11 绘制场景切换按钮
-    private void drawScenceChangeButton(Graphics g) {
+    /**
+     * 3.11 绘制场景切换按钮
+     */
+    private void drawSceneChangeButton(Graphics g) {
         g.drawImage(img_night_button, 900, 10, null);
         g.drawImage(img_daytime_button, 1000, 10, null);
         g.drawImage(img_snow_button, 1100, 10, null);
@@ -618,7 +758,7 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
     // 1.1 随机生成僵尸
     private void generateZombiesAndSuns() {
         generateIndex++;
-        Base_MovingObject zombie = null;
+        BaseMovingObject zombie = null;
         int generateInterval = 2000;
         if (generateIndex > 6000)
             generateInterval = 1500;
@@ -763,8 +903,9 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
     private void hitAction() {
         // 处理豌豆子弹与僵尸的碰撞操作
         // 遍历豌豆子弹
-        for (int i = 0; i < beanBullets.length; i++)
+        for (int i = 0; i < beanBullets.length; i++) {
             hitZombie(beanBullets[i], i);
+        }
         // 门前小车与僵尸的碰撞操作
         // 遍历cars数组
         for (int i = 0; i < cars.length; i++) {
@@ -785,16 +926,16 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
         // 滚动坚果与僵尸的碰撞操作
         // 遍历wallNut_roll数组
-        for (int i = 0; i < wallNuts_roll.length; i++) {
-            for (int j = 0; j < zombies.length; j++)// 遍历僵尸数组
-            {
-                if (wallNuts_roll[i].hitByZombie(zombies[j])
-                        && posToRowAndColumn(wallNuts_roll[i].x + wallNuts_roll[i].width / 2,
-                        wallNuts_roll[i].y + wallNuts_roll[i].height)[0] == posToRowAndColumn(
-                        zombies[j].x + zombies[j].width, zombies[j].y + zombies[j].height)[0])// 此时要控制car与zombie在同一行
-                {
+        for (WallNut_roll wallNut_roll : wallNuts_roll) {
+            // 遍历僵尸数组
+            for (BaseMovingObject zombie : zombies) {
+                // 此时要控制car与zombie在同一行
+                if (wallNut_roll.hitByZombie(zombie)
+                        && posToRowAndColumn(wallNut_roll.x + wallNut_roll.width / 2,
+                        wallNut_roll.y + wallNut_roll.height)[0] == posToRowAndColumn(
+                        zombie.x + zombie.width, zombie.y + zombie.height)[0]) {
                     // 设置僵尸生命值为0，之后会调用clearZombies()方法自动清除生命值为0的僵尸
-                    zombies[j].life = 0;
+                    zombie.life = 0;
                     break;
                 }
             }
@@ -1035,10 +1176,6 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         int plantIndex = -1;
         int x = e.getX();
         int y = e.getY();
-        // System.out
-        // .println("row: " + (posToRowAndColumn(x, y)[0] + 1) + ", column: " +
-        // (posToRowAndColumn(x, y)[1] + 1));
-        // System.out.println("点击位置 xClick: " + x + " yClick: " + y);
         // 根据点击的位置判断点击的卡片
         for (int i = 0; i < SunBank.cards.length; i++) {
             int x_left = 95 + i * (SunBank.cardInterval + SunBank.cards[i].width);
@@ -1046,7 +1183,8 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             int y_up = 12;
             int y_down = y_up + SunBank.cards[i].height;
             if (x > x_left && x < x_right && y > y_up && y < y_down) {
-                plantIndex = i;// 获取点击的卡片标号
+                // 获取点击的卡片标号
+                plantIndex = i;
                 break;
             }
         }
@@ -1056,9 +1194,9 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             // 当前能量值满足购买条件时才能够点击卡片
             if (currentSunEnergy >= sunEnergy[plantIndex]) {
                 // 生成待种植太阳花(阴影显示)
-                nowToBePlanted = new ToBePlanted(imgs_toBePlanted[plantIndex], plantIndex,
-                        x - imgs_toBePlanted[plantIndex].getWidth() / 2,
-                        y - imgs_toBePlanted[plantIndex].getHeight() / 2);
+                nowToBePlanted = new ToBePlanted(imgsToBePlanted[plantIndex], plantIndex,
+                        x - imgsToBePlanted[plantIndex].getWidth() / 2,
+                        y - imgsToBePlanted[plantIndex].getHeight() / 2);
             }
         }
         // 2. 放置植物
@@ -1226,82 +1364,92 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
     // 根据铁铲点击位置铲除植物
     private void removePlant(int x, int y) {
 
-        // 一些需要的变量
-        // -------------------------------------------------------------
         int x_left = 250;
         int x_right = 970;
         int y_up = 55;
         int y_down = 570;
-        int rowsNum = 5;// 行数
-        int columnsNum = 9;// 列数
-        int x_step = (x_right - x_left) / columnsNum;// 网格宽度
-        int y_step = (y_down - y_up) / rowsNum;// 网格高度
-        // -------------------------------------------------------------
-        Point removePoint = positionToBlock(x, y);// 获取铲除区域左上角坐标
+        // 行数
+        int rowsNum = 5;
+        // 列数
+        int columnsNum = 9;
+        // 网格宽度
+        int xStep = (x_right - x_left) / columnsNum;
+        // 网格高度
+        int yStep = (y_down - y_up) / rowsNum;
+        // 获取铲除区域左上角坐标
+        Point removePoint = positionToBlock(x, y);
         int removeX = removePoint.x;
         int removeY = removePoint.y;
         // 遍历太阳花
-        for (int i = 0; i < sunFlowers.length; i++) {
-            int plantX = sunFlowers[i].x + sunFlowers[i].width / 2;// 植物中心X坐标
-            int plantY = sunFlowers[i].y + sunFlowers[i].height / 2;// 植物中心Y坐标
-            // System.out.println("plantX: "+plantX+", plantY: "+plantY);
-            // System.out.println("remove_left: "+removeX+", remove_right:
-            // "+(removeX+x_step));
-            // System.out.println("remove_up: "+removeY+", remove_down: "+(removeY+y_step));
-            if (plantX >= removeX && plantX < removeX + x_step && plantY >= removeY && plantY < removeY + y_step) {
-                // System.out.println("sunFlower removed!");
+        for (SunFlower sunFlower : sunFlowers) {
+            // 植物中心X坐标
+            int plantX = sunFlower.x + sunFlower.width / 2;
+            // 植物中心Y坐标
+            int plantY = sunFlower.y + sunFlower.height / 2;
+            if (plantX >= removeX && plantX < removeX + xStep && plantY >= removeY && plantY < removeY + yStep) {
                 // 去除植物对象
                 // 注意这里不直接去除植物对象，而是设置植物生命值为0，由clearObjects()方法完成植物清除操作
-                sunFlowers[i].life = 0;
-                currentSunEnergy += sunEnergy[0];// 回收能量值
+                sunFlower.life = 0;
+                // 回收能量值
+                currentSunEnergy += sunEnergy[0];
                 break;
             }
         }
         // 遍历豌豆射手
-        for (int i = 0; i < beanShooters.length; i++) {
-            int plantX = beanShooters[i].x + beanShooters[i].width / 2;// 植物中心X坐标
-            int plantY = beanShooters[i].y + beanShooters[i].height / 2;// 植物中心Y坐标
-            if (plantX >= removeX && plantX < removeX + x_step && plantY >= removeY && plantY < removeY + y_step) {
+        for (BeanShooter beanShooter : beanShooters) {
+            int plantX = beanShooter.x + beanShooter.width / 2;// 植物中心X坐标
+            int plantY = beanShooter.y + beanShooter.height / 2;// 植物中心Y坐标
+            if (plantX >= removeX && plantX < removeX + xStep && plantY >= removeY && plantY < removeY + yStep) {
                 // 去除植物对象
                 // 注意这里不直接去除植物对象，而是设置植物生命值为0，由clearObjects()方法完成植物清除操作
-                beanShooters[i].life = 0;
-                currentSunEnergy += sunEnergy[1];// 回收能量值
+                beanShooter.life = 0;
+                // 回收能量值
+                currentSunEnergy += sunEnergy[1];
                 break;
             }
         }
         // 遍历防御坚果
-        for (int i = 0; i < wallNuts.length; i++) {
-            int plantX = wallNuts[i].x + wallNuts[i].width / 2;// 植物中心X坐标
-            int plantY = wallNuts[i].y + wallNuts[i].height / 2;// 植物中心Y坐标
-            if (plantX >= removeX && plantX < removeX + x_step && plantY >= removeY && plantY < removeY + y_step) {
+        for (WallNut wallNut : wallNuts) {
+            // 植物中心X坐标
+            int plantX = wallNut.x + wallNut.width / 2;
+            // 植物中心Y坐标
+            int plantY = wallNut.y + wallNut.height / 2;
+            if (plantX >= removeX && plantX < removeX + xStep && plantY >= removeY && plantY < removeY + yStep) {
                 // 去除植物对象
                 // 注意这里不直接去除植物对象，而是设置植物生命值为0，由clearObjects()方法完成植物清除操作
-                wallNuts[i].life = 0;
-                currentSunEnergy += sunEnergy[2];// 回收能量值
+                wallNut.life = 0;
+                // 回收能量值
+                currentSunEnergy += sunEnergy[2];
                 break;
             }
         }
         // 遍历樱桃炸弹
-        for (int i = 0; i < cherryBombs.length; i++) {
-            int plantX = cherryBombs[i].x + cherryBombs[i].width / 2;// 植物中心X坐标
-            int plantY = cherryBombs[i].y + cherryBombs[i].height / 2;// 植物中心Y坐标
-            if (plantX >= removeX && plantX < removeX + x_step && plantY >= removeY && plantY < removeY + y_step) {
+        for (CherryBomb cherryBomb : cherryBombs) {
+            // 植物中心X坐标
+            int plantX = cherryBomb.x + cherryBomb.width / 2;
+            // 植物中心Y坐标
+            int plantY = cherryBomb.y + cherryBomb.height / 2;
+            if (plantX >= removeX && plantX < removeX + xStep && plantY >= removeY && plantY < removeY + yStep) {
                 // 去除植物对象
                 // 注意这里不直接去除植物对象，而是设置植物生命值为0，由clearObjects()方法完成植物清除操作
-                cherryBombs[i].life = 0;
-                currentSunEnergy += sunEnergy[3];// 回收能量值
+                cherryBomb.life = 0;
+                // 回收能量值
+                currentSunEnergy += sunEnergy[3];
                 break;
             }
         }
         // 遍历土豆地雷
-        for (int i = 0; i < potatoMines.length; i++) {
-            int plantX = potatoMines[i].x + potatoMines[i].width / 2;// 植物中心X坐标
-            int plantY = potatoMines[i].y + potatoMines[i].height / 2;// 植物中心Y坐标
-            if (plantX >= removeX && plantX < removeX + x_step && plantY >= removeY && plantY < removeY + y_step) {
+        for (PotatoMine potatoMine : potatoMines) {
+            // 植物中心X坐标
+            int plantX = potatoMine.x + potatoMine.width / 2;
+            // 植物中心Y坐标
+            int plantY = potatoMine.y + potatoMine.height / 2;
+            if (plantX >= removeX && plantX < removeX + xStep && plantY >= removeY && plantY < removeY + yStep) {
                 // 去除植物对象
                 // 注意这里不直接去除植物对象，而是设置植物生命值为0，由clearObjects()方法完成植物清除操作
-                potatoMines[i].life = 0;
-                currentSunEnergy += sunEnergy[4];// 回收能量值
+                potatoMine.life = 0;
+                // 回收能量值
+                currentSunEnergy += sunEnergy[4];
                 break;
             }
         }
@@ -1313,12 +1461,15 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         int x_right = 970;
         int y_up = 55;
         int y_down = 570;
-        int rowsNum = 5;// 行数
-        int columnsNum = 9;// 列数
+        // 行数
+        int rowsNum = 5;
+        // 列数
+        int columnsNum = 9;
         int row = -1, column = -1;
-        int x_step = (x_right - x_left) / columnsNum;// 网格宽度
-        int y_step = (y_down - y_up) / rowsNum;// 网格高度
-        // System.out.println("x_step: "+x_step+", y_step: "+y_step);
+        // 网格宽度
+        int x_step = (x_right - x_left) / columnsNum;
+        // 网格高度
+        int y_step = (y_down - y_up) / rowsNum;
         x -= x_left;
         y -= y_up;
         // 确定列
@@ -1345,12 +1496,15 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         int x_right = 970;
         int y_up = 55;
         int y_down = 570;
-        int rowsNum = 5;// 行数
-        int columnsNum = 9;// 列数
+        // 行数
+        int rowsNum = 5;
+        // 列数
+        int columnsNum = 9;
         int row = -1, column = -1;
-        int x_step = (x_right - x_left) / columnsNum;// 网格宽度
-        int y_step = (y_down - y_up) / rowsNum;// 网格高度
-        // System.out.println("x_step: "+x_step+", y_step: "+y_step);
+        // 网格宽度
+        int x_step = (x_right - x_left) / columnsNum;
+        // 网格高度
+        int y_step = (y_down - y_up) / rowsNum;
         x -= x_left;
         y -= y_up;
         // 确定列
@@ -1368,10 +1522,7 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             }
         }
         // 标准化后的位置
-        // System.out.println("row " + (row + 1) + ", column " + (column + 1));
-        Point point = new Point(x_left + (2 * column * x_step + x_step) / 2, y_up + (2 * row * y_step + y_step) / 2);
-        // System.out.println("x " + point.x + ", y " + point.y);
-        return point;
+        return new Point(x_left + (2 * column * x_step + x_step) / 2, y_up + (2 * row * y_step + y_step) / 2);
     }
 
     @Override
@@ -1410,28 +1561,32 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
             // 实时更新植物位置
             nowToBePlanted.updatePosition(x - nowToBePlanted.width / 2, y - nowToBePlanted.height / 2);
             // 在待种植区域显示阴影
-            if (x > 250 && x < 970 && y > 55 && y < 570) {
-                Point plantPoint = positionToBlock(x, y);
-                int plantX = plantPoint.x;
-                int plantY = plantPoint.y;
-                // 生成种植区域阴影
-                shadow = new Shadow(plantX - img_shadow.getWidth() / 2, plantY - img_shadow.getHeight() / 2);
-            } else
-                shadow = null;
+            showShadow(x, y);
         }
         // 更新铁铲位置
         if (shovel_used) {
             // 在待种植区域显示阴影
-            if (x > 250 && x < 970 && y > 55 && y < 570) {
-                Point plantPoint = positionToBlock(x, y);
-                int plantX = plantPoint.x;
-                int plantY = plantPoint.y;
-                // 生成种植区域阴影
-                shadow = new Shadow(plantX - img_shadow.getWidth() / 2, plantY - img_shadow.getHeight() / 2);
-            } else
-                shadow = null;
+            showShadow(x, y);
             // 更新铁铲位置
             shovel.updatePosition(x - shovel.width / 2, y - shovel.height / 2);
+        }
+    }
+
+    /**
+     * 在待种植区域显示阴影
+     *
+     * @param x 横坐标
+     * @param y 纵坐标
+     */
+    private void showShadow(int x, int y) {
+        if (x > 250 && x < 970 && y > 55 && y < 570) {
+            Point plantPoint = positionToBlock(x, y);
+            int plantX = plantPoint.x;
+            int plantY = plantPoint.y;
+            // 生成种植区域阴影
+            shadow = new Shadow(plantX - img_shadow.getWidth() / 2, plantY - img_shadow.getHeight() / 2);
+        } else {
+            shadow = null;
         }
     }
 }

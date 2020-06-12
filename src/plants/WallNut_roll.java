@@ -2,7 +2,7 @@ package plants;
 
 import java.awt.image.BufferedImage;
 
-import gameobjects.Base_MovingObject;
+import gameobjects.BaseMovingObject;
 import panels_and_resources.MainGamePanel;
 
 /**
@@ -10,7 +10,7 @@ import panels_and_resources.MainGamePanel;
  *
  * @author LeoHao
  */
-public class WallNut_roll extends Base_MovingObject {
+public class WallNut_roll extends BaseMovingObject {
     private BufferedImage[] images;// 图片集
     private int index;// 图片转换值
     private boolean hitByZombie;
@@ -32,7 +32,7 @@ public class WallNut_roll extends Base_MovingObject {
     }
 
     // 判断坚果是否被僵尸碰撞
-    public boolean hitByZombie(Base_MovingObject zombie) {
+    public boolean hitByZombie(BaseMovingObject zombie) {
         // 注意此时碰撞条件
         if (this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width)
             hitByZombie = true;

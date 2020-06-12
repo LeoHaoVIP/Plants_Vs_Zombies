@@ -9,7 +9,7 @@ import panels_and_resources.MainGamePanel;
  *
  * @author LeoHao
  */
-public class Car extends Base_MovingObject {
+public class Car extends BaseMovingObject {
     private boolean hitByZombie;
 
     public Car(int x, int y) {
@@ -21,33 +21,38 @@ public class Car extends Base_MovingObject {
         this.x = x;
         this.y = y;
         // 私有属性初始化
-        xStep = 0;// 初始化xStep为0，只有当僵尸碰到小车时，设置xStep为4
-        hitByZombie = false;// 初始化为未碰撞
+        // 初始化xStep为0，只有当僵尸碰到小车时，设置xStep为4
+        xStep = 0;
+        // 初始化为未碰撞
+        hitByZombie = false;
     }
 
     // 判断小车是否被僵尸碰撞
-    public boolean hitByZombie(Base_MovingObject zombie) {
+    public boolean hitByZombie(BaseMovingObject zombie) {
         // 注意此时碰撞条件
-        if (this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width)
+        if (this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width) {
             hitByZombie = true;
-        else
+        } else {
             hitByZombie = false;
+        }
         return hitByZombie;
     }
 
     @Override
     public void step() {
 
-        if (hitByZombie)
+        if (hitByZombie) {
             xStep = 4;
+        }
         x += xStep;
     }
 
     @Override
     public boolean outOfBounds() {
 
-        if (x > 1400 - width)
+        if (x > 1400 - width) {
             return true;
+        }
         return false;
     }
 }

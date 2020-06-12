@@ -8,7 +8,7 @@ import panels_and_resources.MainGamePanel;
  *
  * @author LeoHao
  */
-public class Shadow extends Base_MovingObject {
+public class Shadow extends BaseMovingObject {
     public Shadow(int x, int y) {
 
         this.image = MainGamePanel.img_shadow;
@@ -20,19 +20,11 @@ public class Shadow extends Base_MovingObject {
 
     @Override
     public void step() {
-
     }
 
     @Override
     public boolean outOfBounds() {
-
         return false;
     }
 
-    // 更新位置
-    public void updatePosition(int x, int y) {
-
-        this.x = x;
-        this.y = y;
-    }
 }

@@ -3,7 +3,7 @@ package plants;
 import java.awt.image.BufferedImage;
 
 import gameobjects.BeanBullet;
-import gameobjects.Base_MovingObject;
+import gameobjects.BaseMovingObject;
 import panels_and_resources.MainGamePanel;
 
 /**
@@ -11,7 +11,7 @@ import panels_and_resources.MainGamePanel;
  *
  * @author LeoHao
  */
-public class BeanShooter extends Base_MovingObject {
+public class BeanShooter extends BaseMovingObject {
 
     private BufferedImage[] images;// 图片集
     private int index;// 图片转换值
@@ -41,7 +41,7 @@ public class BeanShooter extends Base_MovingObject {
     }
 
     // 判断豌豆射手是否被僵尸碰撞
-    public boolean hitByZombie(Base_MovingObject zombie) {
+    public boolean hitByZombie(BaseMovingObject zombie) {
         // 注意此时碰撞条件
         if (this.life > 0 && this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width)
             hitByZombie = true;

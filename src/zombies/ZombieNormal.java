@@ -2,7 +2,7 @@ package zombies;
 
 import java.awt.image.BufferedImage;
 
-import gameobjects.Base_MovingObject;
+import gameobjects.BaseMovingObject;
 import panels_and_resources.MainGamePanel;
 
 /**
@@ -10,7 +10,7 @@ import panels_and_resources.MainGamePanel;
  *
  * @author LeoHao
  */
-public class ZombieNormal extends Base_MovingObject {
+public class ZombieNormal extends BaseMovingObject {
     private BufferedImage[] images;// 图片集
     private int index;// 图片转换值
     private int life0;// 初始生命值

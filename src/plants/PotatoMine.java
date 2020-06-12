@@ -2,7 +2,7 @@ package plants;
 
 import java.awt.image.BufferedImage;
 
-import gameobjects.Base_MovingObject;
+import gameobjects.BaseMovingObject;
 import panels_and_resources.MainGamePanel;
 
 /**
@@ -10,7 +10,7 @@ import panels_and_resources.MainGamePanel;
  *
  * @author LeoHao
  */
-public class PotatoMine extends Base_MovingObject {
+public class PotatoMine extends BaseMovingObject {
     private BufferedImage[] images;// 图片集
     private int index;// 图片转换值
     private boolean hitByZombie;
@@ -38,7 +38,7 @@ public class PotatoMine extends Base_MovingObject {
     }
 
     // 判断地雷是否被僵尸碰撞
-    public boolean hitByZombie(Base_MovingObject zombie) {
+    public boolean hitByZombie(BaseMovingObject zombie) {
         // 注意此时碰撞条件(生命值>0且地雷已长出)
         if (this.life > 0 && readyWaitTime <= 0 && this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width)
             hitByZombie = true;

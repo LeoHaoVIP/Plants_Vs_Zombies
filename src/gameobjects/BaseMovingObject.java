@@ -23,59 +23,95 @@ import java.awt.image.BufferedImage;
  * for 僵尸： 	   恢复运动方法startMoving()
  * for 僵尸： 	   开始攻击方法startAttacking()
  * for 僵尸： 	   停止攻击方法stopAttacking()
+ *
+ * @author LeoHao
  */
-public abstract class Base_MovingObject {
+public abstract class BaseMovingObject {
     public BufferedImage image;
     public int width;
     public int height;
     public int x, y;
-    public int life;// 生命值(植物、僵尸等物体均具有生命值)
-    public int xStep = 1;// 一次横向移动步数
-    public int yStep = 1;// 一次横向移动步数（部分物体）
+    /**
+     * 生命值(植物、僵尸等物体均具有生命值)
+     */
+    public int life;
+    /**
+     * 一次横向移动步数
+     */
+    protected int xStep = 1;
+    /**
+     * 一次横向移动步数（部分物体）
+     */
+    int yStep = 1;
 
-    public abstract void step();// 物体移动方法
+    /**
+     * 物体移动方法
+     */
+    public abstract void step();
 
-    public abstract boolean outOfBounds();// 判断出界方法
+    /**
+     * 判断出界方法
+     *
+     * @return boolean 是否出界
+     */
+    public abstract boolean outOfBounds();
 
-    // 判断当前对象（僵尸）是否被豌豆子弹bt击中
+    /**
+     * 判断当前对象（僵尸）是否被豌豆子弹bt击中
+     *
+     * @param bt 豌豆子弹
+     * @return boolean 是否击中
+     */
     public boolean hitByBullet(BeanBullet bt) {
         // 注意：为了防止僵尸倒下死亡后仍被豌豆子弹射击，这里需要规定this.life>0
-        if (this.life > 0 && bt.x >= this.x && bt.x + bt.width <= this.x + this.width && bt.y >= this.y
-                && bt.y + bt.height <= this.y + this.height) {
-            return true;
-        } else
-            return false;
+        return this.life > 0 && bt.x >= this.x && bt.x + bt.width <= this.x + this.width && bt.y >= this.y
+                && bt.y + bt.height <= this.y + this.height;
     }
 
-    // 停止运动
+    /**
+     * 停止运动
+     */
     public void stopMoving() {
         xStep = 0;
     }
 
-    // 恢复运动
+    /**
+     * 恢复运动
+     */
     public void startMoving() {
         xStep = 1;
     }
 
-    // 生命值减1
+    /**
+     * 生命值减1
+     */
     public void removeOneLife() {
         this.life--;
     }
 
-    // 变换为攻击状态
+    /**
+     * 变换为攻击状态
+     */
     public void startAttacking() {
     }
 
-    // 变换为普通状态
+    /**
+     * 变换为普通状态
+     */
     public void stopAttacking() {
     }
 
-    // 获取当前生命值
+    /**
+     * 获取当前生命值
+     * @return
+     */
     public int getCurrentLife() {
         return this.life;
     }
 
-    // 僵尸被炸毁方法
+    /**
+     * 僵尸被炸毁方法
+     */
     public void startBombing() {
     }
 }

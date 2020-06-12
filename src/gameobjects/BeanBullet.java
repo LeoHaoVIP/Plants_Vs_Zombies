@@ -7,13 +7,19 @@ import panels_and_resources.MainGamePanel;
  *
  * @author LeoHao
  */
-public class BeanBullet extends Base_MovingObject {
+public class BeanBullet extends BaseMovingObject {
 
-    // 根据豌豆射手的位置生成
+    /**
+     * 根据豌豆射手的位置生成子弹
+     *
+     * @param x 位置x
+     * @param y 位置y
+     */
     public BeanBullet(int x, int y) {
 
         // 公共属性初始化
-        image = MainGamePanel.img_beanBullet;// 初始化图片
+        image = MainGamePanel.img_beanBullet;
+        // 初始化图片
         width = image.getWidth();
         height = image.getHeight();
         this.x = x - width / 2;
@@ -49,8 +55,9 @@ public class BeanBullet extends Base_MovingObject {
     @Override
     public boolean outOfBounds() {
 
-        if (this.x > 1200 - width)
+        if (this.x > 1200 - width) {
             return true;
+        }
         return false;
     }
 }

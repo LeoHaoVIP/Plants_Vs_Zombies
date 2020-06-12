@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import audioplaytools.audioPlayHelper;
+import audioplaytools.AudioPlayHelper;
 import tinygames.TomCatPanel;
 
 /**
@@ -19,14 +19,26 @@ import tinygames.TomCatPanel;
  *
  * @author LeoHao
  */
-@SuppressWarnings("serial")
 public class MainGame extends JFrame {
-    public static JPanel mainPanel;// 主页面
-    private static LoginPanel loginPanel;// 登录界面
-    static MainGamePanel gamePanel;// 主游戏界面
-    static TomCatPanel tomCatPanel;// 小游戏——TomCat游戏界面
-    static BufferedImage img_icon;
-    public static CardLayout cardLayout;//卡片布局管理器定义
+    /**
+     * 主页面
+     */
+    public static JPanel mainPanel;
+    /**
+     * 主游戏界面
+     */
+    private static MainGamePanel gamePanel;
+    /**
+     * 小游戏——TomCat游戏界面
+     */
+    private static TomCatPanel tomCatPanel;
+
+
+    private static BufferedImage imgIcon;
+    /**
+     * 卡片布局管理器定义
+     */
+    public static CardLayout cardLayout;
     public static MainGame frame;
 
     private MainGame(String title) {
@@ -37,15 +49,17 @@ public class MainGame extends JFrame {
 
     public static void main(String[] args) {
         try {
-            img_icon = ImageIO.read(MainGamePanel.class.getResource("img/icon.png"));
+            imgIcon = ImageIO.read(MainGamePanel.class.getResource("img/icon.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
         frame = new MainGame("植物大战僵尸 (人类命运共同体小组)");
-        frame.setIconImage(img_icon);
-        mainPanel.setLayout(cardLayout);// 设置布局管理器
+        frame.setIconImage(imgIcon);
+        // 设置布局管理器
+        mainPanel.setLayout(cardLayout);
         frame.setSize(900, 645);
         // 登录界面
+        LoginPanel loginPanel;
         {
             loginPanel = new LoginPanel();
             loginPanel.addMouseMotionListener(loginPanel);
@@ -55,25 +69,24 @@ public class MainGame extends JFrame {
             loginPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    // System.out.println("mouseClicked!");
                     // 鼠标点击事件：进入游戏主界面
                     int x = e.getX();
                     int y = e.getY();
                     // 注意此时要保证LoginPanel未点击详情对话框
-                    if (!LoginPanel.detailClicked && x > 480 && x < 480 + LoginPanel.img_adventureMode.getWidth() && y > 80
-                            && y < 80 + LoginPanel.img_adventureMode.getHeight()) {
+                    if (!LoginPanel.detailClicked && x > 480 && x < 480 + LoginPanel.imgAdventureMode.getWidth() && y > 80
+                            && y < 80 + LoginPanel.imgAdventureMode.getHeight()) {
                         frame.setSize(1400, 645);
                         frame.setLocationRelativeTo(null);
                         cardLayout.show(mainPanel, "maingame");
-                        audioPlayHelper.stop();
-                        audioPlayHelper.open(MainGamePanel.class.getResource("audio/audio_game.wav"));
-                        audioPlayHelper.play();
+                        AudioPlayHelper.stop();
+                        AudioPlayHelper.open(MainGamePanel.class.getResource("audio/audio_game.wav"));
+                        AudioPlayHelper.play();
                         // 待界面显示完毕时，执行线程
                         Thread thread = new Thread(gamePanel);
                         thread.start();
                     }
-                    if (!LoginPanel.detailClicked && x > 480 && x < 480 + LoginPanel.img_challengeMode.getWidth() && y > 200
-                            && y < 200 + LoginPanel.img_challengeMode.getHeight()) {
+                    if (!LoginPanel.detailClicked && x > 480 && x < 480 + LoginPanel.imgChallengeMode.getWidth() && y > 200
+                            && y < 200 + LoginPanel.imgChallengeMode.getHeight()) {
                         frame.setSize(512, 768);
                         frame.setLocationRelativeTo(null);
                         cardLayout.show(mainPanel, "tomcat");
@@ -101,15 +114,18 @@ public class MainGame extends JFrame {
             //焦点设置
             tomCatPanel.setFocusable(true);
         }
-        mainPanel.add("login", loginPanel);// 添加登录界面
-        mainPanel.add("tomcat", tomCatPanel);// 添加TomCat游戏界面
-        mainPanel.add("maingame", gamePanel);// 添加主游戏界面
+        // 添加登录界面
+        mainPanel.add("login", loginPanel);
+        // 添加TomCat游戏界面
+        mainPanel.add("tomcat", tomCatPanel);
+        // 添加主游戏界面
+        mainPanel.add("maingame", gamePanel);
         frame.add(mainPanel);
         cardLayout.show(mainPanel, "login");
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-        audioPlayHelper.open(MainGamePanel.class.getResource("audio/audio_login.wav"));
-        audioPlayHelper.play();
+        AudioPlayHelper.open(MainGamePanel.class.getResource("audio/audio_login.wav"));
+        AudioPlayHelper.play();
     }
 }
