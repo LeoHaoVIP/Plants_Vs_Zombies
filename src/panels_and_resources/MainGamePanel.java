@@ -1424,10 +1424,9 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
     }
 
     /**
-     * @param x      区域左上角横坐标
-     * @param y      区域左上角纵坐标
-     * @param plants 植物数组
-     * @return 是否存在对应的植物类型
+     * 判断某区域内是否有某类植物
+     *
+     * @return
      */
     private boolean isPlacedToBlockSingle(int x, int y, BaseMovingObject[] plants) {
         // 网格宽度
