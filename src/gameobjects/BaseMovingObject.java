@@ -103,7 +103,8 @@ public abstract class BaseMovingObject {
 
     /**
      * 获取当前生命值
-     * @return
+     *
+     * @return 生命值
      */
     public int getCurrentLife() {
         return this.life;

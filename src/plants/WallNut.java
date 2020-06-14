@@ -11,19 +11,39 @@ import panels_and_resources.MainGamePanel;
  * @author LeoHao
  */
 public class WallNut extends BaseMovingObject {
-    private BufferedImage[] images;// 图片集
-    private int index;// 图片转换值
+    /**
+     * 图片集
+     */
+    private BufferedImage[] images;
+    /**
+     * 图片转换值
+     */
+    private int index;
     private boolean hitByZombie;
     private int indexStep;
-    private int life0;// 初始生命值
-    private boolean beenCracked1;// 啃食到达状态1
-    private boolean beenCracked2;// 啃食到达状态2
-    // 根据玩家拖动的位置构造植物
+    /**
+     * 初始生命值
+     */
+    private int life0;
+    /**
+     * 啃食到达状态1
+     */
+    private boolean beenCracked1;
+    /**
+     * 啃食到达状态2
+     */
+    private boolean beenCracked2;
 
+    /**
+     * 根据玩家拖动的位置构造植物
+     *
+     * @param dragX 用户鼠标位置x
+     * @param dragY 用户鼠标位置y
+     */
     public WallNut(int dragX, int dragY) {
-
         // 公共属性初始化
-        image = MainGamePanel.img_wallNuts[0];// 初始化图片为图片集第一张图片
+        // 初始化图片为图片集第一张图片
+        image = MainGamePanel.img_wallNuts[0];
         width = image.getWidth();
         height = image.getHeight();
         x = dragX;
@@ -39,19 +59,20 @@ public class WallNut extends BaseMovingObject {
         beenCracked2 = false;
     }
 
-    // 判断坚果是否被僵尸碰撞
+    /**
+     * 判断坚果是否被僵尸碰撞
+     *
+     * @param zombie 僵尸对象
+     * @return 是否碰撞
+     */
     public boolean hitByZombie(BaseMovingObject zombie) {
         // 注意此时碰撞条件
-        if (this.life > 0 && this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width)
-            hitByZombie = true;
-        else
-            hitByZombie = false;
+        hitByZombie = this.life > 0 && this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width;
         return hitByZombie;
     }
 
     @Override
     public void step() {
-
         // 修改坐标值
         this.index += indexStep;
         // 根据生命值改变坚果状态
@@ -76,7 +97,6 @@ public class WallNut extends BaseMovingObject {
 
     @Override
     public boolean outOfBounds() {
-
         return false;
     }
 }

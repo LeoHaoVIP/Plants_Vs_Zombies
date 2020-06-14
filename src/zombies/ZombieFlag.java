@@ -11,31 +11,54 @@ import panels_and_resources.MainGamePanel;
  * @author LeoHao
  */
 public class ZombieFlag extends BaseMovingObject {
-    private BufferedImage[] images;// 图片集
-    private int index;// 图片转换值
-    private int life0;// 初始生命值
-    private boolean beenLostHead;// 标记僵尸已被攻击为无头僵尸
-    private boolean beenDead;// 标记僵尸已死亡
-    private boolean isAttacking;// 标记正在攻击
+    /**
+     * 图片集
+     */
+    private BufferedImage[] images;
+    /**
+     * 图片转换值
+     */
+    private int index;
+    /**
+     * 初始生命值
+     */
+    private int life0;
+    /**
+     * 标记僵尸已被攻击为无头僵尸
+     */
+    private boolean beenLostHead;
+    /**
+     * 标记僵尸已死亡
+     */
+    private boolean beenDead;
+    /**
+     * 标记正在攻击
+     */
+    private boolean isAttacking;
     private int indexStep;
-    private boolean isBombing;// 标记是否已经爆炸
-    // 根据玩家拖动的位置构造植物
+    /**
+     * 标记是否已经爆炸
+     */
+    private boolean isBombing;
 
     public ZombieFlag() {
-
         // 公共属性初始化
-        image = MainGamePanel.img_zombiesFlag[0];// 初始化图片为图片集第一张图片
+        // 初始化图片为图片集第一张图片
+        image = MainGamePanel.img_zombiesFlag[0];
         updateSize();
-        this.life = 10;// 僵尸生命值初始为10
+        // 僵尸生命值初始为10
+        this.life = 10;
         // 随机生成僵尸的位置
-        int y_up = 100;
-        int y_down = 570;
-        int rowsNum = 5;// 行数
+        int yUp = 100;
+        int yDown = 570;
+        // 行数
+        int rowsNum = 5;
         int row = (int) (Math.random() * rowsNum);
-        int y_step = (y_down - y_up) / rowsNum;// 网格高度
-        x = 1410 - width / 2;// 从最右面进入草坪
-        y = y_up + (2 * row * y_step + y_step) / 2 - height;
-        // System.out.println("行号："+(row+1));
+        // 网格高度
+        int yStep = (yDown - yUp) / rowsNum;
+        // 从最右面进入草坪
+        x = 1410 - width / 2;
+        y = yUp + (2 * row * yStep + yStep) / 2 - height;
         // 私有属性初始化
         images = MainGamePanel.img_zombiesFlag;
         index = 0;
@@ -53,7 +76,9 @@ public class ZombieFlag extends BaseMovingObject {
         height = image.getHeight();
     }
 
-    // 僵尸被炸毁方法
+    /**
+     * 僵尸被炸毁方法
+     */
     @Override
     public void startBombing() {
         if (!isBombing) {
@@ -62,36 +87,43 @@ public class ZombieFlag extends BaseMovingObject {
             // 更换僵尸图片集为爆炸僵尸
             images = MainGamePanel.img_zombiesBomb;
             isBombing = true;
-            life = 0;// 设置生命值为0
+            // 设置生命值为0
+            life = 0;
         }
     }
 
-    // 变换为攻击状态
+    /**
+     * 变换为攻击状态
+     */
     @Override
     public void startAttacking() {
         if (!isAttacking) {
             index = 0;
-            if (beenLostHead)
+            if (beenLostHead) {
                 images = MainGamePanel.img_zombiesFlagLostHeadAttack;
-            else
+            } else {
                 images = MainGamePanel.img_zombiesFlagAttack;
+            }
             isAttacking = true;
         }
     }
 
-    // 变换为普通状态
+    /**
+     * 变换为普通状态
+     */
     @Override
     public void stopAttacking() {
         index = 0;
-        if (beenLostHead)
+        if (beenLostHead) {
             images = MainGamePanel.img_zombiesFlagLostHead;
-        else images = MainGamePanel.img_zombiesFlag;
+        } else {
+            images = MainGamePanel.img_zombiesFlag;
+        }
         isAttacking = false;
     }
 
     @Override
     public void step() {
-
         // 修改坐标值
         this.x -= xStep;
         this.index += indexStep;
@@ -113,17 +145,25 @@ public class ZombieFlag extends BaseMovingObject {
                 }
             }
         }
+        //更新僵尸图片（动态图）
+        updateZombieImage();
+    }
+
+    /**
+     * 更新僵尸图片（动态图）
+     */
+    private void updateZombieImage() {
         // 运动频率，每运动10次，更换僵尸图片
         int ix = this.index / 10 % this.images.length;
         this.image = this.images[ix];
         updateSize();
-        if (beenDead && ix == images.length - 1)// 僵尸死亡且到达最后一张图片
-        {
+        // 僵尸死亡且到达最后一张图片
+        if (beenDead && ix == images.length - 1) {
             indexStep = 0;
             this.image = this.images[ix];
         }
-        if (isBombing && ix == images.length - 1)// 僵尸死亡且到达最后一张图片
-        {
+        // 僵尸死亡且到达最后一张图片
+        if (isBombing && ix == images.length - 1) {
             indexStep = 0;
             this.image = this.images[ix];
         }
@@ -131,8 +171,6 @@ public class ZombieFlag extends BaseMovingObject {
 
     @Override
     public boolean outOfBounds() {
-        if (this.x < 10)
-            return true;
-        return false;
+        return this.x < 10;
     }
 }

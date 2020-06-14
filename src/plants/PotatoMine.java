@@ -11,23 +11,39 @@ import panels_and_resources.MainGamePanel;
  * @author LeoHao
  */
 public class PotatoMine extends BaseMovingObject {
-    private BufferedImage[] images;// 图片集
-    private int index;// 图片转换值
+    /**
+     * 图片集
+     */
+    private BufferedImage[] images;
+    /**
+     * 图片转换值
+     */
+    private int index;
     private boolean hitByZombie;
     private int indexStep;
-    private int readyWaitTime;//土豆地雷长出所需时间
+    /**
+     * 土豆地雷长出所需时间
+     */
+    private int readyWaitTime;
     private boolean bombed;
-    // 根据玩家拖动的位置构造植物
 
+    /**
+     * 根据玩家拖动的位置构造植物
+     *
+     * @param dragX 用户鼠标位置x
+     * @param dragY 用户鼠标位置y
+     */
     public PotatoMine(int dragX, int dragY) {
 
         // 公共属性初始化
-        image = MainGamePanel.img_potatoMines[0];// 初始化图片为图片集第一张图片
+        // 初始化图片为图片集第一张图片
+        image = MainGamePanel.img_potatoMines[0];
         width = image.getWidth();
         height = image.getHeight();
         x = dragX;
         y = dragY;
-        life = 100;// >0即可
+        //life>0即可
+        life = 100;
         // 私有属性初始化
         images = new BufferedImage[]{MainGamePanel.img_potatoMineNotReady};
         index = 0;
@@ -37,18 +53,22 @@ public class PotatoMine extends BaseMovingObject {
         readyWaitTime = 1000;
     }
 
-    // 判断地雷是否被僵尸碰撞
+    /**
+     * 判断地雷是否被僵尸碰撞
+     *
+     * @param zombie 僵尸对象
+     * @return 是否碰撞
+     */
     public boolean hitByZombie(BaseMovingObject zombie) {
         // 注意此时碰撞条件(生命值>0且地雷已长出)
-        if (this.life > 0 && readyWaitTime <= 0 && this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width)
-            hitByZombie = true;
-        else
-            hitByZombie = false;
+        hitByZombie = this.life > 0 && readyWaitTime <= 0 && this.x - 20 > zombie.x && zombie.x + zombie.width > this.x + width;
         return hitByZombie;
     }
 
-    // 地雷触发方法
-    public void Bomb() {
+    /**
+     * 地雷触发方法
+     */
+    public void bomb() {
         if (!bombed) {
             index = 0;
             indexStep = 0;
@@ -66,7 +86,9 @@ public class PotatoMine extends BaseMovingObject {
             images = MainGamePanel.img_potatoMines;
             index = -1;
             indexStep = 1;
-        } else readyWaitTime--;
+        } else {
+            readyWaitTime--;
+        }
         this.index += indexStep;
         // 运动频率，每运动10次，更换英雄机图片
         int ix = this.index / 10 % this.images.length;
@@ -75,7 +97,6 @@ public class PotatoMine extends BaseMovingObject {
 
     @Override
     public boolean outOfBounds() {
-
         return false;
     }
 }

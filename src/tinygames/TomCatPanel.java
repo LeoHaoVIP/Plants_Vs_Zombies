@@ -12,81 +12,84 @@ import javax.swing.JPanel;
 import panels_and_resources.MainGame;
 import panels_and_resources.MainGamePanel;
 
-@SuppressWarnings("serial")
+/**
+ * @author LeoHao
+ */
 public class TomCatPanel extends JPanel implements Runnable, MouseListener {
-    /*
+    /**
      * 变量声明
+     * 初始化动作为eat
      */
-    int actionCode = 4;// 初始化动作为eat
-    int count = -1;
-    int index = 0;
-    BufferedImage img_background;
-    int eatNum = 40, drinkNum = 81, angryNum = 26, cymbalNum = 13, fartNum = 28, footLeftNum = 30;
-    int footRightNum = 30, knockoutNum = 81, pieNum = 24, scratchNum = 56, stomachNum = 33;
-    int[] actionImageNum;
-    // 背景图片数组
-    String[] img_eatList, img_drinkList, img_angryList, img_cymbalList, img_fartList, img_footLeftList,
-            img_footRightList;
-    String[] img_knockoutList, img_pieList, img_scratchList, img_stomachList;
-    BufferedImage img_eatButton, img_cymbalButton, img_drinkButton, img_fartButton, img_scratchButton, img_pieButton;
-    // 植物大战僵尸图标
-    static BufferedImage img_icon;
+    private int actionCode = 4;
+    private int count = -1;
+    private int index = 0;
+    private BufferedImage imgBackground;
+    private int[] actionImageNum;
+    /**
+     * 背景图片数组
+     */
+    private String[] imgEatList, imgDrinkList, imgAngryList, imgCymbalList, imgFartList, imgFootLeftList,
+            imgFootRightList;
+    private String[] imgKnockoutList, imgPieList, imgScratchList, imgStomachList;
+    private BufferedImage imgEatButton, imgCymbalButton, imgDrinkButton, imgFartButton, imgScratchButton, imgPieButton;
+    /**
+     * 植物大战僵尸图标
+     */
+    private static BufferedImage imgIcon;
 
-    /*
+    /**
      * 构造方法
      */
     public TomCatPanel() {
-        // TODO Auto-generated constructor stub
         init();
         try {
-            img_background = ImageIO.read(TomCatPanel.class.getResource("Animations/eat/eat_00.jpg"));
-            img_cymbalButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/cymbal.png"));
-            img_drinkButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/drink.png"));
-            img_fartButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/fart.png"));
-            img_scratchButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/scratch.png"));
-            img_eatButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/eat.png"));
-            img_pieButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/pie.png"));
-            img_icon = ImageIO.read(MainGamePanel.class.getResource("img/icon.png"));
+            imgBackground = ImageIO.read(TomCatPanel.class.getResource("Animations/eat/eat_00.jpg"));
+            imgCymbalButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/cymbal.png"));
+            imgDrinkButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/drink.png"));
+            imgFartButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/fart.png"));
+            imgScratchButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/scratch.png"));
+            imgEatButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/eat.png"));
+            imgPieButton = ImageIO.read(TomCatPanel.class.getResource("Buttons/pie.png"));
+            imgIcon = ImageIO.read(MainGamePanel.class.getResource("img/icon.png"));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    /*
+    /**
      * 画笔方法
+     *
+     * @param g 画笔工具
      */
     @Override
     public void paint(Graphics g) {
-        // TODO Auto-generated method stub
         super.paint(g);
         // observer代表绘制在哪个对象上
         int interval = 70;
         int startPos = 350;
-        g.drawImage(img_background, 0, 0, 512, 768, null);
-        g.drawImage(img_eatButton, 50, startPos, 60, 60, null);// eat按钮图片
-        g.drawImage(img_pieButton, 50, startPos + interval, 60, 60, null);// pie按钮图片
-        g.drawImage(img_drinkButton, 50, startPos + 2 * interval, 60, 60, null);// drink按钮图片
-        g.drawImage(img_cymbalButton, 400, startPos, 60, 60, null);// cymbal按钮图片
-        g.drawImage(img_fartButton, 400, startPos + interval, 60, 60, null);// fart按钮图片
-        g.drawImage(img_scratchButton, 400, startPos + 2 * interval, 60, 60, null);// scratch按钮图片
-
+        g.drawImage(imgBackground, 0, 0, 512, 768, null);
+        // eat按钮图片
+        g.drawImage(imgEatButton, 50, startPos, 60, 60, null);
+        // pie按钮图片
+        g.drawImage(imgPieButton, 50, startPos + interval, 60, 60, null);
+        // drink按钮图片
+        g.drawImage(imgDrinkButton, 50, startPos + 2 * interval, 60, 60, null);
+        // cymbal按钮图片
+        g.drawImage(imgCymbalButton, 400, startPos, 60, 60, null);
+        // fart按钮图片
+        g.drawImage(imgFartButton, 400, startPos + interval, 60, 60, null);
+        // scratch按钮图片
+        g.drawImage(imgScratchButton, 400, startPos + 2 * interval, 60, 60, null);
         // 植物大战僵尸图标
-        g.drawImage(img_icon, 30, 30, null);
-//		 g.fillRect(100, 130, 300,250);//KnockOut
-        // g.fillRect(185, 680, 60, 50);//leftFoot
-        // g.fillRect(260, 680, 60, 50);//rightFoot
-        // g.fillRect(340, 580, 60, 110);//tail
+        g.drawImage(imgIcon, 30, 30, null);
     }
 
     /**
      * 1 angry 2 cymbal 3 drink 4 eat 5 fart 6 footLeft 7 footRight 8 knockout 9 pie
-     * <p>
      * 10 scratch 11 stomach
      */
     @Override
     public void run() {
-        // TODO Auto-generated method stub
         // 1.业务执行
         while (true) {
             changeView();// 更换视图
@@ -94,7 +97,6 @@ public class TomCatPanel extends JPanel implements Runnable, MouseListener {
             try {
                 Thread.sleep(5);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             // 3.重绘方法
@@ -102,7 +104,9 @@ public class TomCatPanel extends JPanel implements Runnable, MouseListener {
         }
     }
 
-    // 根据动作码更换视图
+    /**
+     * 根据动作码更换视图
+     */
     private void changeView() {
         // 根据ActionCode修改图片变化值
         index++;
@@ -115,43 +119,42 @@ public class TomCatPanel extends JPanel implements Runnable, MouseListener {
             try {
                 switch (actionCode) {
                     case 1:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_angryList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgAngryList[index]));
                         break;
                     case 2:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_cymbalList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgCymbalList[index]));
                         break;
                     case 3:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_drinkList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgDrinkList[index]));
                         break;
                     case 4:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_eatList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgEatList[index]));
                         break;
                     case 5:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_fartList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgFartList[index]));
                         break;
                     case 6:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_footLeftList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgFootLeftList[index]));
                         break;
                     case 7:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_footRightList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgFootRightList[index]));
                         break;
                     case 8:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_knockoutList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgKnockoutList[index]));
                         break;
                     case 9:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_pieList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgPieList[index]));
                         break;
                     case 10:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_scratchList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgScratchList[index]));
                         break;
                     case 11:
-                        img_background = ImageIO.read(TomCatPanel.class.getResource(img_stomachList[index]));
+                        imgBackground = ImageIO.read(TomCatPanel.class.getResource(imgStomachList[index]));
                         break;
                     default:
                         break;
                 }
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -159,12 +162,10 @@ public class TomCatPanel extends JPanel implements Runnable, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO Auto-generated method stub
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        // TODO Auto-generated method stub
         // 获取鼠标坐标值
         int mx = e.getX();
         int my = e.getY();
@@ -226,149 +227,133 @@ public class TomCatPanel extends JPanel implements Runnable, MouseListener {
             System.out.println("angry-tail!");
         }
         //防止一个动作进行时，用户点击另一动作
-        if (index < count)
+        if (index < count) {
             this.setFocusable(false);
-        else this.setFocusable(true);
-        if (mx > 30 && mx < 30 + img_icon.getWidth() && my > 30 && my < 30 + img_icon.getHeight()) {
+        } else {
+            this.setFocusable(true);
+        }
+        if (mx > 30 && mx < 30 + imgIcon.getWidth() && my > 30 && my < 30 + imgIcon.getHeight()) {
             MainGame.cardLayout.show(MainGame.mainPanel, "login");
             MainGame.frame.setSize(900, 645);
-            MainGame.frame.setLocationRelativeTo(null);//Panel居中
+            //Panel居中
+            MainGame.frame.setLocationRelativeTo(null);
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
-    // 鼠标双击
     @Override
     public void mouseEntered(MouseEvent e) {
-        // TODO Auto-generated method stub
-
     }
 
-    // 鼠标退出
     @Override
     public void mouseExited(MouseEvent e) {
-        // TODO Auto-generated method stub
     }
 
     private void init() {
-        eatNum = 40;
-        drinkNum = 81;
-        angryNum = 26;
-        cymbalNum = 13;
-        fartNum = 28;
-        footLeftNum = 30;
-        footRightNum = 30;
-        knockoutNum = 81;
-        pieNum = 24;
-        scratchNum = 56;
-        stomachNum = 33;
-        /*********************************************************************/
+        int eatNum = 40, drinkNum = 81, angryNum = 26, cymbalNum = 13, fartNum = 28, footLeftNum = 30;
+        int footRightNum = 30, knockoutNum = 81, pieNum = 24, scratchNum = 56, stomachNum = 33;
         actionImageNum = new int[]{26, 13, 81, 40, 28, 30, 30, 81, 24, 56, 33};
-        img_eatList = new String[eatNum];
-        img_drinkList = new String[drinkNum];
-        img_angryList = new String[angryNum];
-        img_cymbalList = new String[cymbalNum];
-        img_fartList = new String[fartNum];
-        img_footLeftList = new String[footLeftNum];
-        img_footRightList = new String[footRightNum];
-        img_knockoutList = new String[knockoutNum];
-        img_pieList = new String[pieNum];
-        img_scratchList = new String[scratchNum];
-        img_stomachList = new String[stomachNum];
+        imgEatList = new String[eatNum];
+        imgDrinkList = new String[drinkNum];
+        imgAngryList = new String[angryNum];
+        imgCymbalList = new String[cymbalNum];
+        imgFartList = new String[fartNum];
+        imgFootLeftList = new String[footLeftNum];
+        imgFootRightList = new String[footRightNum];
+        imgKnockoutList = new String[knockoutNum];
+        imgPieList = new String[pieNum];
+        imgScratchList = new String[scratchNum];
+        imgStomachList = new String[stomachNum];
         // 初始化eat动作背景path数组
         for (int i = 0; i < eatNum; i++) {
-            if (i < 10)
-                img_eatList[i] = "Animations/eat/eat_0" + i + ".jpg";
-            else
-                img_eatList[i] = "Animations/eat/eat_" + i + ".jpg";
+            if (i < 10) {
+                imgEatList[i] = "Animations/eat/eat_0" + i + ".jpg";
+            } else {
+                imgEatList[i] = "Animations/eat/eat_" + i + ".jpg";
+            }
         }
         // 初始化drink动作背景path数组
         for (int i = 0; i < drinkNum; i++) {
-            if (i < 10)
-                img_drinkList[i] = "Animations/drink/drink_0" + i + ".jpg";
-            else
-                img_drinkList[i] = "Animations/drink/drink_" + i + ".jpg";
+            if (i < 10) {
+                imgDrinkList[i] = "Animations/drink/drink_0" + i + ".jpg";
+            } else {
+                imgDrinkList[i] = "Animations/drink/drink_" + i + ".jpg";
+            }
         }
         // 初始化angry动作背景path数组
         for (int i = 0; i < angryNum; i++) {
-            if (i < 10)
-                img_angryList[i] = "Animations/angry/angry_0" + i + ".jpg";
-            else
-                img_angryList[i] = "Animations/angry/angry_" + i + ".jpg";
+            if (i < 10) {
+                imgAngryList[i] = "Animations/angry/angry_0" + i + ".jpg";
+            } else {
+                imgAngryList[i] = "Animations/angry/angry_" + i + ".jpg";
+            }
         }
         // 初始化cymbal动作背景path数组
         for (int i = 0; i < cymbalNum; i++) {
-            if (i < 10)
-                img_cymbalList[i] = "Animations/cymbal/cymbal_0" + i + ".jpg";
-            else
-                img_cymbalList[i] = "Animations/cymbal/cymbal_" + i + ".jpg";
+            if (i < 10) {
+                imgCymbalList[i] = "Animations/cymbal/cymbal_0" + i + ".jpg";
+            } else {
+                imgCymbalList[i] = "Animations/cymbal/cymbal_" + i + ".jpg";
+            }
         }
         // 初始化fart动作背景path数组
         for (int i = 0; i < fartNum; i++) {
-            if (i < 10)
-                img_fartList[i] = "Animations/fart/fart_0" + i + ".jpg";
-            else
-                img_fartList[i] = "Animations/fart/fart_" + i + ".jpg";
+            if (i < 10) {
+                imgFartList[i] = "Animations/fart/fart_0" + i + ".jpg";
+            } else {
+                imgFartList[i] = "Animations/fart/fart_" + i + ".jpg";
+            }
         }
         // 初始化footLeft动作背景path数组
         for (int i = 0; i < footLeftNum; i++) {
-            if (i < 10)
-                img_footLeftList[i] = "Animations/footLeft/footLeft_0" + i + ".jpg";
-            else
-                img_footLeftList[i] = "Animations/footLeft/footLeft_" + i + ".jpg";
+            if (i < 10) {
+                imgFootLeftList[i] = "Animations/footLeft/footLeft_0" + i + ".jpg";
+            } else {
+                imgFootLeftList[i] = "Animations/footLeft/footLeft_" + i + ".jpg";
+            }
         }
         // 初始化footRight动作背景path数组
         for (int i = 0; i < footRightNum; i++) {
-            if (i < 10)
-                img_footRightList[i] = "Animations/footRight/footRight_0" + i + ".jpg";
-            else
-                img_footRightList[i] = "Animations/footRight/footRight_" + i + ".jpg";
+            if (i < 10) {
+                imgFootRightList[i] = "Animations/footRight/footRight_0" + i + ".jpg";
+            } else {
+                imgFootRightList[i] = "Animations/footRight/footRight_" + i + ".jpg";
+            }
         }
         // 初始化knockout动作背景path数组
         for (int i = 0; i < knockoutNum; i++) {
-            if (i < 10)
-                img_knockoutList[i] = "Animations/knockout/knockout_0" + i + ".jpg";
-            else
-                img_knockoutList[i] = "Animations/knockout/knockout_" + i + ".jpg";
+            if (i < 10) {
+                imgKnockoutList[i] = "Animations/knockout/knockout_0" + i + ".jpg";
+            } else {
+                imgKnockoutList[i] = "Animations/knockout/knockout_" + i + ".jpg";
+            }
         }
         // 初始化pie动作背景path数组
         for (int i = 0; i < pieNum; i++) {
-            if (i < 10)
-                img_pieList[i] = "Animations/pie/pie_0" + i + ".jpg";
-            else
-                img_pieList[i] = "Animations/pie/pie_" + i + ".jpg";
+            if (i < 10) {
+                imgPieList[i] = "Animations/pie/pie_0" + i + ".jpg";
+            } else {
+                imgPieList[i] = "Animations/pie/pie_" + i + ".jpg";
+            }
         }
         // 初始化scratch动作背景path数组
         for (int i = 0; i < scratchNum; i++) {
-            if (i < 10)
-                img_scratchList[i] = "Animations/scratch/scratch_0" + i + ".jpg";
-            else
-                img_scratchList[i] = "Animations/scratch/scratch_" + i + ".jpg";
+            if (i < 10) {
+                imgScratchList[i] = "Animations/scratch/scratch_0" + i + ".jpg";
+            } else {
+                imgScratchList[i] = "Animations/scratch/scratch_" + i + ".jpg";
+            }
         }
         // 初始化stomach动作背景path数组
         for (int i = 0; i < stomachNum; i++) {
-            if (i < 10)
-                img_stomachList[i] = "Animations/stomach/stomach_0" + i + ".jpg";
-            else
-                img_stomachList[i] = "Animations/stomach/stomach_" + i + ".jpg";
+            if (i < 10) {
+                imgStomachList[i] = "Animations/stomach/stomach_0" + i + ".jpg";
+            } else {
+                imgStomachList[i] = "Animations/stomach/stomach_" + i + ".jpg";
+            }
         }
-        /*********************************************************************/
-        eatNum = -1;
-        drinkNum = -1;
-        angryNum = -1;
-        cymbalNum = -1;
-        fartNum = -1;
-        footLeftNum = -1;
-        footRightNum = -1;
-        knockoutNum = -1;
-        pieNum = -1;
-        scratchNum = -1;
-        stomachNum = -1;
-
     }
 }

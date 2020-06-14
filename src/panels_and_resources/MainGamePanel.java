@@ -1132,7 +1132,7 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                         // 此时要控制car与zombie在同一行
                         zombie.x + zombie.width / 2, zombie.y + zombie.height)[0]) {
                     // 地雷爆炸方法
-                    potatoMine.Bomb();
+                    potatoMine.bomb();
                     // 保证僵尸爆炸图片显示一段时间
                     clearIndex = 1;
                     zombie.startBombing();
@@ -1155,7 +1155,7 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                 // 此时要控制car与zombie在同一行
                 if (cherryBomb.hitByZombie(zombie) && cherryRow == zombieRow) {
                     // 樱桃爆炸方法
-                    cherryBomb.Bomb();
+                    cherryBomb.bomb();
                     // 保证僵尸爆炸图片显示一段时间
                     clearIndex = 1;
                     for (BaseMovingObject baseMovingObject : zombies) {
