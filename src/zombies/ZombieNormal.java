@@ -49,15 +49,16 @@ public class ZombieNormal extends BaseMovingObject {
         // 僵尸生命值初始为10
         this.life = 10;
         // 随机生成僵尸的位置
-        int y_up = 100;
-        int y_down = 570;
-        int rowsNum = 5;// 行数
+        int yUp = 100;
+        int yDown = 570;
+        // 行数
+        int rowsNum = 5;
         int row = (int) (Math.random() * rowsNum);
         // 网格高度
-        int y_step = (y_down - y_up) / rowsNum;
+        int yStep = (yDown - yUp) / rowsNum;
         // 从最右面进入草坪
         x = 1400 - width / 2;
-        y = y_up + (2 * row * y_step + y_step) / 2 - height;
+        y = yUp + (2 * row * yStep + yStep) / 2 - height;
         // 私有属性初始化
         images = MainGamePanel.img_zombiesNormal;
         index = 0;
@@ -86,7 +87,8 @@ public class ZombieNormal extends BaseMovingObject {
             // 更换僵尸图片集为爆炸僵尸
             images = MainGamePanel.img_zombiesBomb;
             isBombing = true;
-            life = 0;// 设置生命值为0
+            // 设置生命值为0
+            life = 0;
         }
     }
 
@@ -112,10 +114,11 @@ public class ZombieNormal extends BaseMovingObject {
     @Override
     public void stopAttacking() {
         index = 0;
-        if (beenLostHead)
+        if (beenLostHead) {
             images = MainGamePanel.img_zombiesLostHead;
-        else
+        } else {
             images = MainGamePanel.img_zombiesNormal;
+        }
         isAttacking = false;
     }
 
