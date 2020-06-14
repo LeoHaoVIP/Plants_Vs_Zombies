@@ -369,6 +369,18 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
      * 1.80 标记当前处于冰冻模式
      */
     private static boolean isIceMode;
+    /**
+     * 游戏界面边界
+     */
+    private int x_left = 250, x_right = 970, y_up = 55, y_down = 570;
+    /**
+     * 草坪行数
+     */
+    private int rowsNum = 5;
+    /**
+     * 草坪列数
+     */
+    private int columnsNum = 9;
 
     static {
         try {
@@ -1038,8 +1050,10 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
                             if (posToRowAndColumn(wallNut.x + wallNut.width / 2,
                                     wallNut.y + wallNut.height)[0] == posToRowAndColumn(
                                     baseMovingObject.x + baseMovingObject.width, baseMovingObject.y + baseMovingObject.height)[0]) {
-                                baseMovingObject.startMoving();// 继续运动
-                                baseMovingObject.stopAttacking();// 状态恢复
+                                // 继续运动
+                                baseMovingObject.startMoving();
+                                // 状态恢复
+                                baseMovingObject.stopAttacking();
                             }
                         }
                     }
@@ -1131,29 +1145,29 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         for (CherryBomb cherryBomb : cherryBombs) {
             // 遍历僵尸数组
             for (BaseMovingObject zombie : zombies) {
-                int cherry_row = posToRowAndColumn(cherryBomb.x + cherryBomb.width / 2,
+                int cherryRow = posToRowAndColumn(cherryBomb.x + cherryBomb.width / 2,
                         cherryBomb.y + cherryBomb.height)[0];
-                int cherry_column = posToRowAndColumn(cherryBomb.x + cherryBomb.width / 2,
+                int cherryColumn = posToRowAndColumn(cherryBomb.x + cherryBomb.width / 2,
                         cherryBomb.y + cherryBomb.height)[1];
-                int zombie_row = posToRowAndColumn(zombie.x + zombie.width / 2,
+                int zombieRow = posToRowAndColumn(zombie.x + zombie.width / 2,
                         zombie.y + zombie.height)[0];
-                int zombie_column;
+                int zombieColumn;
                 // 此时要控制car与zombie在同一行
-                if (cherryBomb.hitByZombie(zombie) && cherry_row == zombie_row) {
+                if (cherryBomb.hitByZombie(zombie) && cherryRow == zombieRow) {
                     // 樱桃爆炸方法
                     cherryBomb.Bomb();
                     // 保证僵尸爆炸图片显示一段时间
                     clearIndex = 1;
                     for (BaseMovingObject baseMovingObject : zombies) {
                         // 注意樱桃炸弹可炸毁周围(上下左右)区域的所有僵尸
-                        zombie_row = posToRowAndColumn(baseMovingObject.x + baseMovingObject.width / 2,
+                        zombieRow = posToRowAndColumn(baseMovingObject.x + baseMovingObject.width / 2,
                                 baseMovingObject.y + baseMovingObject.height)[0];
-                        zombie_column = posToRowAndColumn(baseMovingObject.x + baseMovingObject.width / 2,
+                        zombieColumn = posToRowAndColumn(baseMovingObject.x + baseMovingObject.width / 2,
                                 baseMovingObject.y + baseMovingObject.height)[1];
-                        if ((zombie_row == cherry_row && zombie_column >= cherry_column - 1
-                                && zombie_column <= cherry_column + 1)
-                                || (zombie_column == cherry_column && zombie_row >= zombie_row - 1
-                                && zombie_row <= zombie_row + 1)) {
+                        if ((zombieRow == cherryRow && zombieColumn >= cherryColumn - 1
+                                && zombieColumn <= cherryColumn + 1)
+                                || (zombieColumn == cherryColumn && zombieRow >= zombieRow - 1
+                                && zombieRow <= zombieRow + 1)) {
                             // 十字架范围爆炸
                             // 僵尸爆炸方法
                             baseMovingObject.startBombing();
@@ -1409,71 +1423,36 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
         }
     }
 
-    // 辅助方法：判断某区域(以左上角x,y坐标给出)是否存在植物
-    private boolean isPlacedToBlock(int x, int y) {
-        int x_left = 250;
-        int x_right = 970;
-        int y_up = 55;
-        int y_down = 570;
-        // 行数
-        int rowsNum = 5;
-        // 列数
-        int columnsNum = 9;
+    /**
+     * @param x      区域左上角横坐标
+     * @param y      区域左上角纵坐标
+     * @param plants 植物数组
+     * @return 是否存在对应的植物类型
+     */
+    private boolean isPlacedToBlockSingle(int x, int y, BaseMovingObject[] plants) {
         // 网格宽度
-        int x_step = (x_right - x_left) / columnsNum;
+        int xStep = (x_right - x_left) / columnsNum;
         // 网格高度
-        int y_step = (y_down - y_up) / rowsNum;
+        int yStep = (y_down - y_up) / rowsNum;
         // 遍历太阳花
-        for (SunFlower sunFlower : sunFlowers) {
+        for (BaseMovingObject plant : plants) {
             // 植物中心X坐标
-            int plantX = sunFlower.x + sunFlower.width / 2;
+            int plantX = plant.x + plant.width / 2;
             // 植物中心Y坐标
-            int plantY = sunFlower.y + sunFlower.height / 2;
-            if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
-                return true;
-            }
-        }
-        // 遍历豌豆射手
-        for (BeanShooter beanShooter : beanShooters) {
-            // 植物中心X坐标
-            int plantX = beanShooter.x + beanShooter.width / 2;
-            // 植物中心Y坐标
-            int plantY = beanShooter.y + beanShooter.height / 2;
-            if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
-                return true;
-            }
-        }
-        // 遍历防御坚果
-        for (WallNut wallNut : wallNuts) {
-            // 植物中心X坐标
-            int plantX = wallNut.x + wallNut.width / 2;
-            // 植物中心Y坐标
-            int plantY = wallNut.y + wallNut.height / 2;
-            if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
-                return true;
-            }
-        }
-        // 遍历樱桃炸弹
-        for (CherryBomb cherryBomb : cherryBombs) {
-            // 植物中心X坐标
-            int plantX = cherryBomb.x + cherryBomb.width / 2;
-            // 植物中心Y坐标
-            int plantY = cherryBomb.y + cherryBomb.height / 2;
-            if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
-                return true;
-            }
-        }
-        // 遍历土豆地雷
-        for (PotatoMine potatoMine : potatoMines) {
-            // 植物中心X坐标
-            int plantX = potatoMine.x + potatoMine.width / 2;
-            // 植物中心Y坐标
-            int plantY = potatoMine.y + potatoMine.height / 2;
-            if (plantX >= x && plantX < x + x_step && plantY >= y && plantY < y + y_step) {
+            int plantY = plant.y + plant.height / 2;
+            if (plantX >= x && plantX < x + xStep && plantY >= y && plantY < y + yStep) {
                 return true;
             }
         }
         return false;
+    }
+
+    // 辅助方法：判断某区域(以左上角x,y坐标给出)是否存在植物
+    private boolean isPlacedToBlock(int x, int y) {
+        //判断区域内是否存在太阳花、豌豆射手、防御坚果、樱桃炸弹、土豆地雷
+        return isPlacedToBlockSingle(x, y, sunFlowers) || isPlacedToBlockSingle(x, y, beanShooters)
+                || isPlacedToBlockSingle(x, y, wallNuts) || isPlacedToBlockSingle(x, y, cherryBombs)
+                || isPlacedToBlockSingle(x, y, potatoMines);
     }
 
     /**
@@ -1483,7 +1462,6 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
      * @param y 纵坐标
      */
     private void removePlant(int x, int y) {
-
         int x_left = 250;
         int x_right = 970;
         int y_up = 55;
@@ -1585,14 +1563,6 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
      * @return 草坪行列号
      */
     private int[] posToRowAndColumn(int x, int y) {
-        int x_left = 250;
-        int x_right = 970;
-        int y_up = 55;
-        int y_down = 570;
-        // 行数
-        int rowsNum = 5;
-        // 列数
-        int columnsNum = 9;
         int row = -1, column = -1;
         // 网格宽度
         int x_step = (x_right - x_left) / columnsNum;
@@ -1626,35 +1596,13 @@ public class MainGamePanel extends JPanel implements Runnable, MouseListener, Mo
      * @return 植物中心位置
      */
     private Point positionToBlock(int x, int y) {
-        int x_left = 250;
-        int x_right = 970;
-        int y_up = 55;
-        int y_down = 570;
-        // 行数
-        int rowsNum = 5;
-        // 列数
-        int columnsNum = 9;
-        int row = -1, column = -1;
         // 网格宽度
         int x_step = (x_right - x_left) / columnsNum;
         // 网格高度
         int y_step = (y_down - y_up) / rowsNum;
-        x -= x_left;
-        y -= y_up;
-        // 确定列
-        for (int i = 0; i < columnsNum; i++) {
-            if (x >= i * x_step && x < (i + 1) * x_step) {
-                column = i;
-                break;
-            }
-        }
-        // 确定行 0-103-206-309-412-515
-        for (int i = 0; i < rowsNum; i++) {
-            if (y >= i * y_step && y < (i + 1) * y_step) {
-                row = i;
-                break;
-            }
-        }
+        int[] array = posToRowAndColumn(x, y);
+        int row = array[0];
+        int column = array[1];
         // 标准化后的位置
         return new Point(x_left + (2 * column * x_step + x_step) / 2, y_up + (2 * row * y_step + y_step) / 2);
     }
